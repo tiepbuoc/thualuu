@@ -1,0 +1,1742 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TL - Nề nếp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+  :root{
+    --sky:#1E88E5;
+    --sky-dark:#0F6BC4;
+    --sky-deep:#0B4C8C;
+    --sky-light:#5FA8EB;
+    --sky-soft:#E9F3FD;
+    --sky-soft-2:#D6EAFB;
+    --ink:#0E2A47;
+    --ink-soft:#3E6690;
+    --ink-faint:#8CA3BC;
+    --bg:#F4F9FE;
+    --card:#FFFFFF;
+    --crimson:#D64550;
+    --crimson-soft:#FCE8E9;
+    --forest:#22996B;
+    --forest-soft:#E1F5EC;
+    --amber:#C4841E;
+    --amber-soft:#FBF0DC;
+    --line:#DCEAF8;
+    --radius:16px;
+    --shadow-sm:0 1px 2px rgba(14,42,71,0.06), 0 1px 1px rgba(14,42,71,0.04);
+    --shadow-md:0 8px 24px -8px rgba(14,74,140,0.18);
+    --shadow-lg:0 24px 56px -20px rgba(14,74,140,0.30);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html{-webkit-tap-highlight-color:transparent;}
+  body{
+    margin:0;
+    background:var(--bg);
+    background-image:radial-gradient(circle at 10% 0%, var(--sky-soft) 0%, transparent 42%), radial-gradient(circle at 100% 0%, var(--sky-soft-2) 0%, transparent 38%);
+    background-attachment:fixed;
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    min-height:100dvh;
+    -webkit-font-smoothing:antialiased;
+  }
+  button,input,select,textarea{font-family:inherit;}
+  button{-webkit-tap-highlight-color:transparent;}
+  .fa-fw-icon{width:1em;text-align:center;}
+  h1,h2,h3,.display{font-family:'Lora',serif;letter-spacing:-0.01em;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  a{color:inherit;}
+  ::selection{background:var(--sky-soft-2);color:var(--sky-deep);}
+
+  /* ---------- initial boot loader ---------- */
+  #bootLoader{position:fixed;inset:0;background:linear-gradient(160deg,var(--sky-deep),var(--sky));
+    display:flex;align-items:center;justify-content:center;z-index:999;transition:opacity .35s ease, visibility .35s ease;}
+  #bootLoader.hide{opacity:0;visibility:hidden;pointer-events:none;}
+  #bootLoader .boot-inner{display:flex;flex-direction:column;align-items:center;gap:16px;}
+  #bootLoader .boot-mark{width:56px;height:56px;border-radius:16px;background:rgba(255,255,255,0.15);
+    display:flex;align-items:center;justify-content:center;font-family:'Lora',serif;font-weight:700;
+    color:#fff;font-size:22px;box-shadow:inset 0 0 0 2px rgba(255,255,255,0.35);}
+  #bootLoader .boot-spin{width:30px;height:30px;border-radius:50%;border:3px solid rgba(255,255,255,0.3);
+    border-top-color:#fff;animation:spin .8s linear infinite;}
+  #bootLoader .boot-text{color:#EAF3FD;font-size:13px;letter-spacing:.03em;}
+
+  @keyframes spin{to{transform:rotate(360deg);}}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+  @keyframes shimmer{0%{background-position:-300px 0;}100%{background-position:300px 0;}}
+
+  /* ---------- spinner / loading states ---------- */
+  .spinner{width:16px;height:16px;border-radius:50%;border:2.5px solid var(--sky-soft-2);
+    border-top-color:var(--sky);animation:spin .7s linear infinite;flex-shrink:0;}
+  .spinner.lg{width:26px;height:26px;border-width:3px;}
+  .loading-state{display:flex;align-items:center;justify-content:center;gap:10px;color:var(--ink-faint);
+    font-size:13.5px;padding:36px 4px;animation:fadeIn .2s ease;}
+  .btn-spin{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,0.4);
+    border-top-color:#fff;animation:spin .7s linear infinite;display:inline-block;vertical-align:-2px;margin-right:7px;}
+  .skel{position:relative;overflow:hidden;background:var(--sky-soft);border-radius:8px;color:transparent !important;}
+  .skel::after{content:"";position:absolute;inset:0;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,0.7), transparent);
+    background-size:300px 100%;animation:shimmer 1.3s ease-in-out infinite;}
+
+  .topbar{
+    background:linear-gradient(120deg,var(--sky-deep),var(--sky-dark) 60%, var(--sky));
+    color:#fff;padding:14px 24px;
+    display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+    box-shadow:var(--shadow-md);position:sticky;top:0;z-index:30;
+  }
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand-mark{width:38px;height:38px;border-radius:11px;background:rgba(255,255,255,0.16);
+    display:flex;align-items:center;justify-content:center;font-family:'Lora',serif;
+    font-weight:700;color:#fff;font-size:15px;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,0.35);}
+  .brand-text .name{font-family:'Lora',serif;font-weight:600;font-size:18px;line-height:1.1;}
+  .brand-text .sub{font-size:11.5px;color:#CFE6FB;letter-spacing:.04em;text-transform:uppercase;}
+  .who{display:flex;align-items:center;gap:14px;font-size:14px;}
+  .who .tag{font-size:11px;text-transform:uppercase;letter-spacing:.05em;background:rgba(255,255,255,0.14);
+    padding:3px 9px;border-radius:100px;color:#EAF3FD;display:inline-flex;align-items:center;gap:5px;}
+  .btn-ghost{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.3);color:#fff;
+    width:38px;height:38px;padding:0;border-radius:10px;cursor:pointer;font-size:15px;font-family:inherit;
+    display:inline-flex;align-items:center;justify-content:center;transition:background .15s ease,transform .1s ease;flex-shrink:0;}
+  .btn-ghost:hover{background:rgba(255,255,255,0.18);}
+  .btn-ghost:active{transform:scale(.92);}
+  .btn-ghost.wide{width:auto;padding:9px 16px;gap:8px;}
+
+  .shell{max-width:1120px;margin:0 auto;padding:26px 24px 90px;}
+  .tabs{display:flex;gap:4px;margin-bottom:26px;border-bottom:1px solid var(--line);
+    overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  .tabs::-webkit-scrollbar{display:none;}
+  .tab{padding:11px 16px;font-size:14px;font-weight:600;cursor:pointer;color:var(--ink-faint);
+    border-bottom:2.5px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:color .15s ease;
+    display:inline-flex;align-items:center;gap:7px;}
+  .tab i{font-size:13px;opacity:.85;}
+  .tab:hover{color:var(--sky-dark);}
+  .tab.active{color:var(--sky-deep);border-bottom-color:var(--sky);}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;
+    box-shadow:var(--shadow-sm);}
+  .grid-2{display:grid;grid-template-columns:1.1fr 1.6fr;gap:20px;}
+  @media (max-width:800px){.grid-2{grid-template-columns:1fr;}}
+
+  label{display:block;font-size:12.5px;font-weight:600;color:var(--ink-soft);margin-bottom:5px;
+    text-transform:uppercase;letter-spacing:.03em;}
+  input[type=text],input[type=email],input[type=password],input[type=number],select,textarea{
+    width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;
+    font-family:inherit;font-size:15px;background:#FBFDFF;color:var(--ink);transition:border-color .15s ease, box-shadow .15s ease;}
+  textarea{resize:vertical;min-height:90px;}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--sky);box-shadow:0 0 0 3px var(--sky-soft-2);}
+  .field{margin-bottom:16px;}
+  .check-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;
+    border:1.5px solid var(--line);border-radius:10px;padding:10px;background:#FBFDFF;max-height:170px;overflow:auto;}
+  .check-grid label{display:flex;align-items:center;gap:6px;font-size:13px;text-transform:none;
+    font-weight:500;color:var(--ink);margin:0;}
+  .check-grid input{width:auto;}
+
+  .file-picker{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:4px 0;}
+  .file-picker-name{font-size:13px;color:var(--ink-faint);word-break:break-all;}
+
+  .btn{background:var(--sky);color:#fff;border:none;padding:11px 18px;border-radius:10px;
+    font-family:inherit;font-weight:600;font-size:14px;cursor:pointer;transition:background .15s ease, transform .1s ease, box-shadow .15s ease;
+    display:inline-flex;align-items:center;justify-content:center;gap:7px;line-height:1.2;}
+  .btn:hover{background:var(--sky-dark);box-shadow:var(--shadow-sm);}
+  .btn:active{transform:translateY(1px) scale(.98);}
+  .btn:disabled{opacity:.55;cursor:not-allowed;transform:none;}
+  .btn-accent{background:var(--sky);color:#fff;box-shadow:0 4px 14px -6px rgba(30,136,229,.55);}
+  .btn-accent:hover{background:var(--sky-dark);}
+  .btn-outline{background:#fff;border:1.5px solid var(--sky-soft-2);color:var(--sky-deep);}
+  .btn-outline:hover{background:var(--sky-soft);border-color:var(--sky);}
+  .btn-danger{background:transparent;border:1.5px solid var(--crimson);color:var(--crimson);}
+  .btn-danger:hover{background:var(--crimson-soft);}
+  .btn-sm{padding:6px 11px;font-size:12.5px;border-radius:8px;}
+  .btn i, .btn-ghost i, .btn-icon i{font-size:.95em;}
+
+  /* ---------- Icon-only round action buttons (edit / delete / restore / key…) ---------- */
+  .btn-icon{width:34px;height:34px;border-radius:9px;border:1.5px solid var(--line);background:#fff;
+    color:var(--ink-soft);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;
+    font-size:13.5px;transition:background .15s ease,border-color .15s ease,color .15s ease,transform .1s ease;flex-shrink:0;}
+  .btn-icon:hover{background:var(--sky-soft);border-color:var(--sky-soft-2);color:var(--sky-deep);}
+  .btn-icon:active{transform:scale(.92);}
+  .btn-icon.danger{color:var(--crimson);}
+  .btn-icon.danger:hover{background:var(--crimson-soft);border-color:var(--crimson);}
+  .btn-icon.forest{color:var(--forest);}
+  .btn-icon.forest:hover{background:var(--forest-soft);border-color:var(--forest);}
+  .btn-icon.accent{color:var(--sky-deep);}
+  .btn-icon.accent:hover{background:var(--sky-soft);border-color:var(--sky);}
+  .row-actions{display:inline-flex;gap:6px;align-items:center;justify-content:flex-end;}
+
+  .msg{font-size:13.5px;padding:10px 13px;border-radius:10px;margin-bottom:14px;display:flex;align-items:flex-start;gap:9px;line-height:1.5;animation:fadeIn .2s ease;}
+  .msg::before{font-family:"Font Awesome 6 Free";font-weight:900;font-size:14.5px;flex-shrink:0;margin-top:1px;}
+  .msg.err{background:var(--crimson-soft);color:var(--crimson);}
+  .msg.err::before{content:"\f06a";}
+  .msg.ok{background:var(--forest-soft);color:var(--forest);}
+  .msg.ok::before{content:"\f058";}
+  .msg.info{background:var(--sky-soft);color:var(--sky-deep);}
+  .msg.info::before{content:"\f05a";}
+
+  .table-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:12px;}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:480px;}
+  th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-faint);
+    padding:9px 10px;border-bottom:1.5px solid var(--line);white-space:nowrap;}
+  td{padding:10px 10px;border-bottom:1px solid var(--line);vertical-align:middle;}
+  tr:last-child td{border-bottom:none;}
+  tbody tr{transition:background .12s ease;}
+  tbody tr:hover{background:var(--sky-soft);}
+  .pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:100px;font-size:11.5px;font-weight:600;white-space:nowrap;}
+  .pill::before{font-family:"Font Awesome 6 Free";font-weight:900;font-size:10px;}
+  .pill.pending{background:var(--amber-soft);color:var(--amber);}
+  .pill.pending::before{content:"\f017";}
+  .pill.approved{background:var(--forest-soft);color:var(--forest);}
+  .pill.approved::before{content:"\f00c";}
+  .pill.rejected{background:var(--crimson-soft);color:var(--crimson);}
+  .pill.rejected::before{content:"\f00d";}
+  .pill.confirmed{background:var(--sky-soft-2);color:var(--sky-deep);}
+  .pill.confirmed::before{content:"\f560";}
+
+  .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;
+    background:linear-gradient(150deg,var(--sky-deep) 0%,var(--sky-dark) 45%,var(--sky-light) 100%);}
+  .login-card{width:100%;max-width:380px;background:var(--card);border:1px solid var(--line);
+    border-radius:20px;padding:36px 32px;box-shadow:var(--shadow-lg);animation:fadeIn .3s ease;}
+  .login-mark{width:52px;height:52px;border-radius:14px;background:var(--sky);display:flex;
+    align-items:center;justify-content:center;font-family:'Lora',serif;font-weight:700;color:#fff;
+    font-size:20px;margin-bottom:18px;box-shadow:0 8px 20px -6px rgba(30,136,229,0.55);}
+  .login-card h1{font-size:22px;margin:0 0 4px;color:var(--sky-deep);}
+  .login-card .lead{font-size:13.5px;color:var(--ink-faint);margin-bottom:24px;line-height:1.5;}
+
+  .slip{position:relative;background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:20px 22px 22px;margin-bottom:16px;overflow:hidden;box-shadow:var(--shadow-sm);}
+  .slip::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:var(--sky);}
+  .slip-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:10px;flex-wrap:wrap;}
+  .slip-head .who{color:var(--ink);font-weight:600;font-size:15px;}
+  .slip-head .meta{font-size:12px;color:var(--ink-faint);}
+  .slip-content{font-size:14.5px;line-height:1.55;color:var(--ink-soft);margin-bottom:14px;white-space:pre-wrap;}
+  .slip-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px 20px;
+    margin:12px 0 16px;padding:13px 15px;background:var(--sky-soft);border-radius:11px;}
+  .slip-meta .item{display:flex;flex-direction:column;gap:2px;min-width:0;}
+  .slip-meta .k{font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--sky-dark);font-weight:700;}
+  .slip-meta .v{font-size:13.5px;color:var(--ink);font-weight:600;word-break:break-word;}
+  .content-label{font-size:12.5px;font-weight:600;color:var(--ink-soft);text-transform:uppercase;
+    letter-spacing:.03em;margin-bottom:6px;display:block;}
+  .stamp{position:absolute;top:14px;right:18px;border:2px solid var(--crimson);color:var(--crimson);
+    font-family:'JetBrains Mono',monospace;font-weight:700;font-size:11.5px;padding:4px 10px;border-radius:7px;
+    letter-spacing:.03em;background:rgba(214,69,80,0.05);}
+  .stamp.forest{border-color:var(--forest);color:var(--forest);background:rgba(34,153,107,0.05);}
+  .stamp.accent{border-color:var(--sky);color:var(--sky-deep);background:rgba(30,136,229,0.06);}
+  .confirm-row{display:flex;align-items:flex-start;gap:10px;margin-top:6px;}
+  .confirm-row input[type=checkbox]{width:18px;height:18px;margin-top:2px;accent-color:var(--sky);}
+  .confirm-row .ctext{font-size:13.5px;color:var(--ink-soft);}
+  .statement-box{margin-top:12px;}
+  .empty{color:var(--ink-faint);font-size:14px;padding:34px 4px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px;}
+  .empty::before{font-family:"Font Awesome 6 Free";font-weight:400;content:"\f10c";font-size:26px;color:var(--sky-light);opacity:.7;}
+
+  .section-title{display:flex;align-items:baseline;gap:10px;margin:28px 0 12px;}
+  .section-title h2{font-size:17px;margin:0;color:var(--sky-deep);}
+  .section-title .count{font-size:12px;color:var(--ink-faint);}
+  .hint{font-size:12.5px;color:var(--ink-faint);margin-top:6px;}
+  .divider{height:1px;background:var(--line);margin:20px 0;}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow-sm);}
+  .stat .n{font-family:'Lora',serif;font-size:26px;font-weight:600;color:var(--sky-deep);}
+  .stat .l{font-size:12px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.03em;}
+  .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:26px;}
+  @media (max-width:800px){.stat-grid{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:480px){.stat-grid{grid-template-columns:1fr;}}
+  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:end;}
+  .row > div{flex:1;min-width:150px;}
+
+  .week-block{margin-bottom:26px;}
+  .week-header{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+    background:linear-gradient(100deg,var(--sky-deep),var(--sky-dark));color:#fff;padding:13px 18px;border-radius:14px 14px 0 0;}
+  .week-header .wt{font-family:'Lora',serif;font-weight:600;font-size:15px;}
+  .week-header .score{display:flex;align-items:center;gap:8px;}
+  .week-header .score .n{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:17px;color:#DCEAF7;}
+  .week-body{border:1px solid var(--line);border-top:none;border-radius:0 0 14px 14px;background:var(--card);}
+  .week-row{display:flex;gap:14px;padding:12px 18px;border-bottom:1px solid var(--line);align-items:flex-start;}
+  .week-row:last-child{border-bottom:none;}
+  .week-row .day{width:150px;flex-shrink:0;font-size:12.5px;color:var(--ink-faint);}
+  .week-row .day b{display:block;color:var(--ink);font-size:13.5px;}
+  .week-row .body{flex:1;font-size:14px;min-width:0;}
+  .week-row .body .nm{font-weight:600;}
+  .week-row .body .ct{color:var(--ink-soft);margin-top:2px;}
+  .week-row .pts{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--crimson);white-space:nowrap;}
+  @media (max-width:600px){.week-row{flex-direction:column;gap:4px;}.week-row .day{width:auto;}}
+
+  .modal-bg{position:fixed;inset:0;background:rgba(11,55,92,0.5);display:flex;align-items:center;
+    justify-content:center;padding:20px;z-index:50;animation:fadeIn .15s ease;backdrop-filter:blur(1px);}
+  .modal{background:var(--card);border-radius:18px;padding:26px 28px;max-width:520px;width:100%;
+    max-height:88vh;overflow:auto;box-shadow:var(--shadow-lg);animation:fadeIn .2s ease;}
+  .modal h3{margin-top:0;color:var(--sky-deep);}
+  .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;}
+
+  .badge-role{font-size:11px;padding:2px 8px;border-radius:100px;background:var(--sky-soft-2);
+    color:var(--sky-deep);font-weight:600;}
+  .import-log{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--sky-deep);color:#DCEAF7;
+    padding:12px 14px;border-radius:12px;max-height:220px;overflow:auto;white-space:pre-wrap;line-height:1.6;}
+
+  /* ---------- FAB (nút tạo mới dạng dấu cộng tròn) ---------- */
+  .btn-fab{width:46px;height:46px;border-radius:50%;background:var(--sky);color:#fff;border:none;
+    font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;
+    box-shadow:var(--shadow-md);transition:background .15s ease, transform .1s ease;flex-shrink:0;}
+  .btn-fab:hover{background:var(--sky-dark);transform:translateY(-1px);}
+  .btn-fab:active{transform:scale(.94);}
+  .modal.modal-wide{max-width:760px;}
+
+  /* ---------- Danh sách vi phạm gọn (dùng chung: sổ theo dõi, lịch sử HS/Cờ đỏ) ---------- */
+  .simple-list{border:1px solid var(--line);border-radius:14px;background:var(--card);overflow:hidden;box-shadow:var(--shadow-sm);}
+  .simple-row{display:flex;gap:14px;padding:12px 18px;border-bottom:1px solid var(--line);align-items:center;}
+  .simple-row:last-child{border-bottom:none;}
+  .simple-row .day{width:110px;flex-shrink:0;font-size:12.5px;color:var(--ink-faint);}
+  .simple-row .day b{display:block;color:var(--ink);font-size:13.5px;}
+  .simple-row .body{flex:1;font-size:14px;min-width:0;}
+  .simple-row .body .nm{font-weight:600;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .simple-row .body .ct{color:var(--ink-soft);margin-top:2px;}
+  .simple-row .pts{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--crimson);white-space:nowrap;}
+  @media (max-width:600px){.simple-row{flex-wrap:wrap;}.simple-row .day{width:auto;}}
+
+  /* ---------- Nút icon tròn nhỏ (i thông tin / chìa khóa mật khẩu…) ---------- */
+  .info-btn{background:var(--sky-soft);border:1.5px solid transparent;color:var(--sky-deep);width:30px;height:30px;border-radius:50%;
+    cursor:pointer;font-size:12.5px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;
+    transition:background .15s ease, transform .1s ease;}
+  .info-btn:hover{background:var(--sky-soft-2);border-color:var(--sky-soft-2);}
+  .info-btn:active{transform:scale(.9);}
+
+  .rank-line{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:linear-gradient(120deg,var(--sky-soft),var(--sky-soft-2));
+    color:var(--sky-deep);padding:12px 16px;border-radius:12px;font-size:13.5px;margin-bottom:18px;border:1px solid var(--sky-soft-2);}
+  .rank-line b{color:var(--sky-deep);}
+  .rank-line .trophy{width:30px;height:30px;border-radius:9px;background:var(--sky);color:#fff;display:inline-flex;
+    align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+
+  @media (max-width:640px){
+    .topbar{padding:10px 14px;}
+    .brand-mark{width:34px;height:34px;font-size:13px;border-radius:9px;}
+    .brand-text .name{font-size:15px;}
+    .shell{padding:16px 12px 90px;}
+    .card{padding:16px 14px;border-radius:13px;}
+    .login-card{padding:26px 20px;border-radius:16px;}
+    .who{gap:8px;font-size:12.5px;}
+    .who .tag{display:none;}
+    .brand-text{display:none;}
+    .modal{padding:18px 16px;border-radius:14px;}
+    .section-title{margin:20px 0 10px;}
+    .tab{padding:10px 12px;font-size:13px;}
+    .btn{padding:11px 16px;font-size:13.5px;}
+    .btn-sm{padding:8px 12px;min-height:34px;}
+    .btn-icon{width:36px;height:36px;}
+    .stat{padding:14px 15px;}
+    .slip{padding:16px 16px 18px;}
+    .slip-meta{grid-template-columns:1fr 1fr;gap:8px 12px;padding:11px 12px;}
+    .modal-actions{flex-wrap:wrap;}
+    .modal-actions .btn{flex:1;min-width:110px;}
+    .row-actions{gap:8px;}
+  }
+  @media (max-width:400px){
+    .slip-meta{grid-template-columns:1fr;}
+  }
+  /* Bigger, thumb-friendly form controls on touch devices */
+  @media (hover:none){
+    input[type=text],input[type=email],input[type=password],input[type=number],select,textarea{font-size:16px;}
+    .btn,.btn-sm{min-height:38px;}
+  }
+</style>
+</head>
+<body>
+<div id="bootLoader">
+  <div class="boot-inner">
+    <div class="boot-mark">TL</div>
+    <div class="boot-spin"></div>
+    <div class="boot-text"><i class="fas fa-circle-notch fa-spin" style="margin-right:6px;opacity:.8;"></i>Đang tải hệ thống…</div>
+  </div>
+</div>
+<div id="app"></div>
+<div id="modalRoot"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyA_ZRDZroWrQPuWtZ6eIj3QuPOOYeQ_SPU",
+  authDomain: "th-tl-8875a.firebaseapp.com",
+  projectId: "th-tl-8875a",
+  storageBucket: "th-tl-8875a.firebasestorage.app",
+  messagingSenderId: "285172440374",
+  appId: "1:285172440374:web:ecf176970edd67ecdaa797",
+  measurementId: "G-T6JGDD5GY4"
+};
+
+const app = firebase.initializeApp(firebaseConfig);
+const secondaryApp = firebase.initializeApp(firebaseConfig, "Secondary");
+const auth = app.auth();
+const secondaryAuth = secondaryApp.auth();
+const db = app.firestore();
+
+const EMAIL_DOMAIN = "tl-nenep.local";
+const ADMIN_EMAIL = "admin@admin.com";
+const root = document.getElementById('app');
+const modalRoot = document.getElementById('modalRoot');
+
+let state = { user:null, profile:null, tab:null, classesCache:[], selectedClassId:null, violationCache:{} };
+
+const ROLE_LABEL = { admin:'Quản trị viên', gvcn:'Giáo viên chủ nhiệm', hs:'Học sinh', cd:'Cờ đỏ', bch:'BCH Đoàn' };
+const WEEKDAY_VN = ['Chủ Nhật','Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy'];
+
+/* ============ HELPERS ============ */
+function esc(s){ return (s||'').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function fmtDate(ts){
+  if(!ts) return '—';
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  return d.toLocaleString('vi-VN', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+}
+function fmtDay(ts){
+  if(!ts) return {weekday:'—', date:'—'};
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  return { weekday: WEEKDAY_VN[d.getDay()], date: d.toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric'}) };
+}
+function codeFromEmail(email){ return (email||'').split('@')[0]; }
+function randomPw(){ return 'ns' + Math.random().toString(36).slice(2,8); }
+function toDateObj(ts){ return ts.toDate ? ts.toDate() : new Date(ts); }
+
+function weekInfo(dateObj){
+  const d = new Date(dateObj);
+  const day = (d.getDay() + 6) % 7; // 0 = Monday
+  const monday = new Date(d); monday.setDate(d.getDate() - day); monday.setHours(0,0,0,0);
+  const sunday = new Date(monday); sunday.setDate(monday.getDate() + 6);
+  const key = monday.toISOString().slice(0,10);
+  const label = `Tuần ${monday.toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit'})} – ${sunday.toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric'})}`;
+  return { key, label, monday, sunday };
+}
+
+function openModal(html, opts){
+  const wide = (opts && opts.wide) ? ' modal-wide' : '';
+  modalRoot.innerHTML = `<div class="modal-bg" onclick="if(event.target===this) closeModal()"><div class="modal${wide}">${html}</div></div>`;
+}
+function closeModal(){ modalRoot.innerHTML = ''; }
+
+/* ============ LOADING UI HELPERS ============ */
+function loading(text){ return `<div class="loading-state"><span class="spinner"></span><span>${esc(text||'Đang tải…')}</span></div>`; }
+function btnLoading(el, text){
+  if(!el) return;
+  el.dataset.label = el.dataset.label || el.innerHTML;
+  el.disabled = true;
+  el.innerHTML = `<span class="btn-spin"></span>${esc(text||'Đang xử lý…')}`;
+}
+function btnReset(el){
+  if(!el) return;
+  el.disabled = false;
+  if(el.dataset.label) el.innerHTML = el.dataset.label;
+}
+function hideBootLoader(){
+  const b = document.getElementById('bootLoader');
+  if(b) b.classList.add('hide');
+}
+
+async function loadClasses(force){
+  if(state.classesCache.length && !force) return state.classesCache;
+  const snap = await db.collection('classes').orderBy('name').get();
+  state.classesCache = snap.docs.map(d => ({id:d.id, ...d.data()}));
+  return state.classesCache;
+}
+function className(id){
+  const c = state.classesCache.find(c => c.id === id);
+  return c ? c.name : '—';
+}
+
+/* ============ AUTH STATE ============ */
+auth.onAuthStateChanged(async (user) => {
+  state.user = user;
+  state.tab = null;
+  if(!user){ state.profile = null; renderLogin(); hideBootLoader(); return; }
+  const doc = await db.collection('users').doc(user.uid).get();
+  if(doc.exists){
+    const data = doc.data();
+    if(data.deleted){
+      await auth.signOut();
+      state.profile = null;
+      renderLogin();
+      const msg = document.getElementById('loginMsg');
+      if(msg) msg.innerHTML = `<div class="msg err">Tài khoản này đã bị Quản trị viên xóa khỏi hệ thống.</div>`;
+      hideBootLoader();
+      return;
+    }
+    state.profile = { uid: user.uid, ...data };
+    await loadClasses(true);
+    routeToApp();
+  } else {
+    renderOnboarding();
+  }
+  hideBootLoader();
+});
+
+function routeToApp(){
+  const p = state.profile;
+  if(p.accountType === 'teacher'){
+    if(p.role === 'admin') return renderAdmin();
+    if(p.role === 'gvcn') return renderGvcn();
+  }
+  renderStudentApp();
+}
+
+function logout(){ auth.signOut(); }
+
+/* ============ LOGIN (shared GV & HS) ============ */
+function renderLogin(){
+  root.innerHTML = `
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="login-mark">TL</div>
+      <h1>TL &middot; Nề nếp</h1>
+      <div class="lead">Dùng chung cho giáo viên và học sinh &mdash; xác nhận điện tử, không cần lưu hồ sơ giấy.</div>
+      <div id="loginMsg"></div>
+      <div class="field">
+        <label><i class="fas fa-id-card fa-fw-icon" style="margin-right:4px;"></i>Mã đăng nhập hoặc email</label>
+        <input id="loginId" type="text" placeholder="vd: hs5a1_01 hoặc admin@admin.com">
+      </div>
+      <div class="field">
+        <label><i class="fas fa-lock fa-fw-icon" style="margin-right:4px;"></i>Mật khẩu</label>
+        <input id="loginPw" type="password" placeholder="Mật khẩu">
+      </div>
+      <button class="btn btn-accent" id="loginBtn" style="width:100%;padding:12px;" onclick="doLogin()"><i class="fas fa-arrow-right-to-bracket"></i>Đăng nhập</button>
+      <div class="hint" style="margin-top:14px;">Giáo viên và học sinh dùng chung một cổng đăng nhập, hệ thống sẽ tự chuyển vào đúng giao diện theo tài khoản.</div>
+    </div>
+  </div>`;
+  document.getElementById('loginPw').addEventListener('keydown', e => { if(e.key === 'Enter') doLogin(); });
+}
+
+async function doLogin(){
+  const idVal = document.getElementById('loginId').value.trim();
+  const pw = document.getElementById('loginPw').value;
+  const msg = document.getElementById('loginMsg');
+  const btn = document.getElementById('loginBtn');
+  msg.innerHTML = '';
+  if(!idVal || !pw){ msg.innerHTML = `<div class="msg err">Vui lòng nhập đầy đủ thông tin.</div>`; return; }
+  const email = idVal.includes('@') ? idVal : `${idVal}@${EMAIL_DOMAIN}`;
+  btnLoading(btn, 'Đang đăng nhập…');
+  try{ await auth.signInWithEmailAndPassword(email, pw); }
+  catch(e){ msg.innerHTML = `<div class="msg err">Đăng nhập thất bại: sai mã hoặc mật khẩu.</div>`; }
+  finally{ btnReset(btn); }
+}
+
+/* ============ ONBOARDING (bootstrap admin only) ============ */
+function renderOnboarding(){
+  const isAdminEmail = state.user.email === ADMIN_EMAIL;
+  root.innerHTML = `
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="login-mark">TL</div>
+      <h1>Thiết lập tài khoản</h1>
+      <div class="lead">${isAdminEmail
+        ? 'Tài khoản này khớp với email quản trị hệ thống. Thiết lập hồ sơ Quản trị viên bên dưới.'
+        : 'Tài khoản của bạn chưa có hồ sơ. Vui lòng liên hệ Quản trị viên để được cấp tài khoản đúng vai trò.'}</div>
+      <div id="obMsg"></div>
+      ${isAdminEmail ? `
+        <div class="field"><label>Họ và tên</label><input id="obName" type="text" placeholder="Nguyễn Văn A"></div>
+        <button class="btn btn-accent" style="width:100%;padding:12px;margin-bottom:10px;" onclick="claimAdmin()"><i class="fas fa-user-shield"></i>Thiết lập là Quản trị viên</button>
+      ` : ''}
+      <button class="btn-ghost wide" style="width:100%;padding:10px;color:var(--ink);border-color:var(--line);" onclick="logout()"><i class="fas fa-arrow-right-from-bracket"></i>Đăng xuất</button>
+    </div>
+  </div>`;
+}
+
+async function claimAdmin(){
+  const name = document.getElementById('obName').value.trim();
+  const msg = document.getElementById('obMsg');
+  if(!name){ msg.innerHTML = `<div class="msg err">Vui lòng nhập họ tên.</div>`; return; }
+  try{
+    await db.collection('users').doc(state.user.uid).set({
+      accountType:'teacher', role:'admin', name, email: state.user.email,
+      classId:null, classIds:[], createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    const doc = await db.collection('users').doc(state.user.uid).get();
+    state.profile = { uid: state.user.uid, ...doc.data() };
+    await loadClasses(true);
+    renderAdmin();
+  }catch(e){ msg.innerHTML = `<div class="msg err">Lỗi: ${esc(e.message)}</div>`; }
+}
+
+/* ============ TOPBAR ============ */
+function topbar(){
+  const p = state.profile;
+  const roleLabel = ROLE_LABEL[p.role] || p.role;
+  return `
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark">TL</div>
+      <div class="brand-text"><div class="name">Nề nếp</div><div class="sub">Sổ xác nhận điện tử</div></div>
+    </div>
+    <div class="who">
+      <div style="text-align:right;">
+        <div style="font-weight:600;">${esc(p.name)}</div>
+        <span class="tag"><i class="fas fa-id-badge"></i>${esc(roleLabel)}</span>
+      </div>
+      <button class="btn-ghost" onclick="logout()" title="Đăng xuất" aria-label="Đăng xuất"><i class="fas fa-arrow-right-from-bracket"></i></button>
+    </div>
+  </div>`;
+}
+
+const TAB_ICONS = {
+  classes:'fa-school', accounts:'fa-users', approve:'fa-clipboard-check', log:'fa-clock-rotate-left',
+  roster:'fa-list-ol', violations:'fa-triangle-exclamation', me:'fa-user'
+};
+function tabsBar(tabs){
+  return `<div class="tabs">${tabs.map(t => `<div class="tab ${state.tab===t.key?'active':''}" onclick="setTab('${t.key}')">${TAB_ICONS[t.key]?`<i class="fas ${TAB_ICONS[t.key]}"></i>`:''}${esc(t.label)}</div>`).join('')}</div>`;
+}
+function setTab(t){ state.tab = t; routeToApp(); }
+
+/* ================================================================
+   ADMIN APP
+   ================================================================ */
+const ADMIN_TABS = [
+  {key:'classes', label:'Lớp học'},
+  {key:'accounts', label:'Tài khoản'},
+  {key:'violations', label:'Vi phạm'},
+  {key:'log', label:'Sổ theo dõi'},
+];
+
+async function renderAdmin(){
+  if(!state.tab || state.tab === 'overview') state.tab = 'classes';
+  root.innerHTML = `${topbar()}<div class="shell">${tabsBar(ADMIN_TABS)}<div id="tabBody">${loading()}</div></div>`;
+  const body = document.getElementById('tabBody');
+  if(state.tab === 'classes') return renderClassesTab(body);
+  if(state.tab === 'accounts') return renderAccountsTab(body);
+  if(state.tab === 'violations') return renderAdminViolationsTab(body);
+  if(state.tab === 'log') return renderLogTab(body);
+}
+
+/* ---------- Classes ---------- */
+async function renderClassesTab(body){
+  body.innerHTML = `
+    <div class="grid-2">
+      <div class="card">
+        <h3 style="margin-top:0;"><i class="fas fa-square-plus" style="color:var(--sky);margin-right:6px;"></i>Thêm lớp mới</h3>
+        <div id="clsMsg"></div>
+        <div class="field"><label>Tên lớp</label><input id="clsName" type="text" placeholder="vd: 5A1"></div>
+        <button class="btn btn-accent" id="addClassBtn" onclick="addClass()"><i class="fas fa-plus"></i>Tạo lớp</button>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0;"><i class="fas fa-school" style="color:var(--sky);margin-right:6px;"></i>Danh sách lớp</h3>
+        <div id="clsList">${loading()}</div>
+      </div>
+    </div>`;
+  renderClassList();
+}
+
+function renderClassList(){
+  const el = document.getElementById('clsList');
+  if(state.classesCache.length === 0){ el.innerHTML = `<div class="empty">Chưa có lớp nào.</div>`; return; }
+  el.innerHTML = `<div class="table-wrap"><table><thead><tr><th>Tên lớp</th><th></th></tr></thead><tbody>
+    ${state.classesCache.map(c => `<tr><td>${esc(c.name)}</td><td style="text-align:right;white-space:nowrap;">
+      <div class="row-actions">
+        <button class="btn-icon" onclick="renameClass('${c.id}')" title="Sửa tên lớp" aria-label="Sửa tên lớp"><i class="fas fa-pen"></i></button>
+        <button class="btn-icon forest" id="gradBtn-${c.id}" onclick="graduateClass('${c.id}')" title="Cho lớp tốt nghiệp" aria-label="Cho lớp tốt nghiệp"><i class="fas fa-graduation-cap"></i></button>
+        <button class="btn-icon danger" onclick="deleteClass('${c.id}')" title="Xóa lớp" aria-label="Xóa lớp"><i class="fas fa-trash"></i></button>
+      </div>
+    </td></tr>`).join('')}
+  </tbody></table></div>`;
+}
+
+async function addClass(){
+  const name = document.getElementById('clsName').value.trim();
+  const msg = document.getElementById('clsMsg');
+  const btn = document.getElementById('addClassBtn');
+  if(!name){ msg.innerHTML = `<div class="msg err">Vui lòng nhập tên lớp.</div>`; return; }
+  btnLoading(btn, 'Đang tạo…');
+  try{
+    await db.collection('classes').add({ name, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+    document.getElementById('clsName').value = '';
+    msg.innerHTML = `<div class="msg ok">Đã tạo lớp ${esc(name)}.</div>`;
+    await loadClasses(true);
+    renderClassList();
+  }catch(e){ msg.innerHTML = `<div class="msg err">Lỗi: ${esc(e.message)}</div>`; }
+  finally{ btnReset(btn); }
+}
+
+async function renameClass(id){
+  const current = className(id);
+  const name = prompt('Tên lớp mới:', current);
+  if(!name || !name.trim() || name.trim() === current) return;
+  await db.collection('classes').doc(id).update({ name: name.trim() });
+  await loadClasses(true);
+  renderClassList();
+}
+
+async function deleteClass(id){
+  if(!confirm(`Xóa lớp "${className(id)}"? Các tài khoản đang gắn với lớp này sẽ cần được cập nhật lại thủ công.`)) return;
+  await db.collection('classes').doc(id).delete();
+  await loadClasses(true);
+  renderClassList();
+}
+
+/* ---------- Tốt nghiệp: xóa toàn bộ dữ liệu + tài khoản của lớp (giữ lại GVCN) ---------- */
+async function graduateClass(id){
+  const name = className(id);
+  const ok = confirm(
+    `CHO LỚP "${name}" TỐT NGHIỆP?\n\n` +
+    `Thao tác này sẽ:\n` +
+    `• Xóa vĩnh viễn toàn bộ phiếu vi phạm của lớp này\n` +
+    `• Xóa tài khoản Học sinh / Cờ đỏ / BCH có lớp chủ quản là lớp này\n` +
+    `• Gỡ lớp này khỏi danh sách phân công của GVCN / Cờ đỏ khác (nếu có)\n` +
+    `• Xóa lớp học khỏi hệ thống\n\n` +
+    `Tài khoản GVCN sẽ được GIỮ LẠI.\n\n` +
+    `Không thể hoàn tác thao tác này. Bạn chắc chắn chứ?`
+  );
+  if(!ok) return;
+
+  const btn = document.getElementById(`gradBtn-${id}`);
+  btnLoading(btn, 'Đang xử lý…');
+  try{
+    const [violSnap, homeSnap, refSnap] = await Promise.all([
+      db.collection('violations').where('classId','==', id).get(),
+      db.collection('users').where('classId','==', id).get(),
+      db.collection('users').where('classIds','array-contains', id).get()
+    ]);
+
+    const ops = [];
+    violSnap.forEach(d => ops.push({ ref:d.ref, type:'delete' }));
+    homeSnap.forEach(d => {
+      const u = d.data();
+      if(u.role === 'gvcn') return; // giữ lại tài khoản GVCN
+      ops.push({ ref:d.ref, type:'update', data:{ deleted:true, deletedAt: firebase.firestore.FieldValue.serverTimestamp() } });
+    });
+    refSnap.forEach(d => {
+      const u = d.data();
+      if(u.classId === id) return; // đã xử lý ở bước trên
+      const newIds = (u.classIds||[]).filter(cid => cid !== id);
+      ops.push({ ref:d.ref, type:'update', data:{ classIds:newIds } });
+    });
+    ops.push({ ref: db.collection('classes').doc(id), type:'delete' });
+
+    for(let i = 0; i < ops.length; i += 450){
+      const chunk = ops.slice(i, i+450);
+      const batch = db.batch();
+      chunk.forEach(op => op.type === 'delete' ? batch.delete(op.ref) : batch.update(op.ref, op.data));
+      await batch.commit();
+    }
+
+    await loadClasses(true);
+    renderClassList();
+  }catch(e){
+    alert('Lỗi khi cho lớp tốt nghiệp: ' + e.message);
+    btnReset(btn);
+  }
+}
+
+/* ---------- Accounts ---------- */
+async function renderAccountsTab(body){
+  body.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px;">
+      <h2 style="margin:0;font-size:19px;color:var(--sky-deep);"><i class="fas fa-users" style="margin-right:8px;"></i>Danh sách tài khoản</h2>
+      <button class="btn-fab" id="openCreateAccountBtn" onclick="openCreateAccountModal()" title="Tạo tài khoản mới" aria-label="Tạo tài khoản mới"><i class="fas fa-plus"></i></button>
+    </div>
+    <div class="card">
+      <div class="row" style="margin-bottom:12px;">
+        <div><label>Lọc theo vai trò</label>
+          <select id="acFilterRole" onchange="loadAccountList()">
+            <option value="all">Tất cả (đang hoạt động)</option>
+            <option value="gvcn">GVCN</option>
+            <option value="hs">HS</option>
+            <option value="cd">Cờ đỏ</option>
+            <option value="bch">BCH Đoàn</option>
+            <option value="deleted">Đã xóa (lưu trữ)</option>
+          </select>
+        </div>
+      </div>
+      <div id="accountList">${loading()}</div>
+    </div>`;
+  loadAccountList();
+}
+
+/* ---------- Popup tạo tài khoản: 2 chế độ — Tạo từng tài khoản / Tạo nhanh (Excel) ---------- */
+function openCreateAccountModal(){
+  openModal(`
+    <h3 style="margin-top:0;"><i class="fas fa-user-plus" style="color:var(--sky);margin-right:6px;"></i>Tạo tài khoản mới</h3>
+    <div class="tabs" style="margin-bottom:18px;">
+      <div class="tab active" id="camTabSingle" onclick="switchCreateAccountMode('single')"><i class="fas fa-user"></i>Tạo từng tài khoản</div>
+      <div class="tab" id="camTabBulk" onclick="switchCreateAccountMode('bulk')"><i class="fas fa-file-excel"></i>Tạo nhanh (Excel)</div>
+    </div>
+    <div id="createAccountBody"></div>
+  `, {wide:true});
+  switchCreateAccountMode('single');
+}
+
+function switchCreateAccountMode(mode){
+  const tSingle = document.getElementById('camTabSingle');
+  const tBulk = document.getElementById('camTabBulk');
+  if(tSingle) tSingle.classList.toggle('active', mode === 'single');
+  if(tBulk) tBulk.classList.toggle('active', mode === 'bulk');
+  const el = document.getElementById('createAccountBody');
+  if(!el) return;
+  if(mode === 'single') renderSingleAccountForm(el);
+  else renderBulkImportForm(el);
+}
+
+function renderSingleAccountForm(el){
+  el.innerHTML = `
+    <div id="acMsg"></div>
+    <div class="field">
+      <label>Loại tài khoản</label>
+      <select id="acType" onchange="onAcTypeChange()">
+        <option value="teacher">Giáo viên chủ nhiệm (GVCN)</option>
+        <option value="hs">Học sinh (HS)</option>
+        <option value="cd">Cờ đỏ</option>
+        <option value="bch">BCH Đoàn</option>
+      </select>
+    </div>
+    <div class="field"><label>Họ và tên</label><input id="acName" type="text" placeholder="Nguyễn Văn A"></div>
+    <div id="acHomeClassWrap" class="field" style="display:none;">
+      <label>Lớp của học sinh</label>
+      <select id="acHomeClass"></select>
+    </div>
+    <div id="acClassIdsWrap" class="field" style="display:none;">
+      <label id="acClassIdsLabel">Lớp được phân công</label>
+      <div class="check-grid" id="acClassIds"></div>
+    </div>
+    <div class="field"><label>Mã đăng nhập</label><input id="acCode" type="text" placeholder="vd: hs5a1_01"></div>
+    <div class="field"><label>Mật khẩu ban đầu</label><input id="acPw" type="text" value="${randomPw()}"></div>
+    <div class="modal-actions" style="justify-content:space-between;">
+      <button class="btn btn-outline" onclick="closeModal()"><i class="fas fa-xmark"></i>Đóng</button>
+      <button class="btn btn-accent" id="addAccountBtn" onclick="addAccount()"><i class="fas fa-plus"></i>Tạo tài khoản</button>
+    </div>
+  `;
+  populateClassSelects();
+  onAcTypeChange();
+}
+
+function renderBulkImportForm(el){
+  el.innerHTML = `
+    <p class="hint" style="font-size:13.5px;">Tải file mẫu, điền thông tin, rồi tải lên lại. Lớp học chưa tồn tại sẽ được tự động tạo.</p>
+    <button class="btn btn-outline" onclick="downloadTemplate()"><i class="fas fa-file-arrow-down"></i>Tải file mẫu (.xlsx)</button>
+    <div class="divider"></div>
+    <div class="field">
+      <label>Chọn file đã điền</label>
+      <div class="file-picker">
+        <input type="file" id="importFile" accept=".xlsx,.xls" onchange="handleExcelFile(event)" hidden>
+        <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('importFile').click()"><i class="fas fa-folder-open"></i>Chọn file Excel</button>
+        <span id="importFileName" class="file-picker-name">Chưa chọn file nào</span>
+      </div>
+    </div>
+    <div id="importPreview"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal()"><i class="fas fa-xmark"></i>Đóng</button>
+    </div>
+  `;
+}
+
+function populateClassSelects(){
+  const opts = state.classesCache.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
+  const homeSel = document.getElementById('acHomeClass');
+  if(homeSel) homeSel.innerHTML = opts || `<option value="">(chưa có lớp)</option>`;
+  const grid = document.getElementById('acClassIds');
+  if(grid) grid.innerHTML = state.classesCache.map(c =>
+    `<label><input type="checkbox" value="${c.id}"> ${esc(c.name)}</label>`).join('') || `<div class="hint">Chưa có lớp nào.</div>`;
+}
+
+function onAcTypeChange(){
+  const type = document.getElementById('acType').value;
+  const homeWrap = document.getElementById('acHomeClassWrap');
+  const idsWrap = document.getElementById('acClassIdsWrap');
+  const idsLabel = document.getElementById('acClassIdsLabel');
+  homeWrap.style.display = (type === 'hs' || type === 'cd' || type === 'bch') ? 'block' : 'none';
+  idsWrap.style.display = (type === 'teacher' || type === 'cd') ? 'block' : 'none';
+  idsLabel.textContent = type === 'teacher' ? 'Lớp chủ nhiệm' : 'Lớp được phân công giám sát';
+}
+
+async function addAccount(){
+  const type = document.getElementById('acType').value;
+  const name = document.getElementById('acName').value.trim();
+  const code = document.getElementById('acCode').value.trim().toLowerCase().replace(/\s+/g,'');
+  const pw = document.getElementById('acPw').value;
+  const msg = document.getElementById('acMsg');
+  msg.innerHTML = '';
+  if(!name || !code || pw.length < 6){
+    msg.innerHTML = `<div class="msg err">Vui lòng nhập đủ họ tên, mã đăng nhập, mật khẩu tối thiểu 6 ký tự.</div>`;
+    return;
+  }
+  let classId = null, classIds = [];
+  if(type === 'hs' || type === 'cd' || type === 'bch'){
+    classId = document.getElementById('acHomeClass').value;
+    if(!classId){ msg.innerHTML = `<div class="msg err">Vui lòng chọn lớp của học sinh.</div>`; return; }
+  }
+  if(type === 'teacher' || type === 'cd'){
+    classIds = Array.from(document.querySelectorAll('#acClassIds input:checked')).map(i => i.value);
+  }
+  const accountType = type === 'teacher' ? 'teacher' : 'student';
+  const role = type === 'teacher' ? 'gvcn' : type;
+  const email = `${code}@${EMAIL_DOMAIN}`;
+  const btn = document.getElementById('addAccountBtn');
+  btnLoading(btn, 'Đang tạo…');
+  try{
+    const cred = await secondaryAuth.createUserWithEmailAndPassword(email, pw);
+    await db.collection('users').doc(cred.user.uid).set({
+      accountType, role, name, email, classId, classIds,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    await db.collection('credentials').doc(cred.user.uid).set({
+      password: pw, updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    await secondaryAuth.signOut();
+    msg.innerHTML = `<div class="msg ok">Đã tạo tài khoản ${esc(name)} (${ROLE_LABEL[role]}). Mã đăng nhập: ${esc(code)}</div>`;
+    document.getElementById('acName').value = '';
+    document.getElementById('acCode').value = '';
+    document.getElementById('acPw').value = randomPw();
+    document.querySelectorAll('#acClassIds input').forEach(i => i.checked = false);
+    loadAccountList();
+  }catch(e){
+    let m = e.message;
+    if(e.code === 'auth/email-already-in-use') m = 'Mã đăng nhập đã tồn tại, vui lòng chọn mã khác.';
+    msg.innerHTML = `<div class="msg err">Lỗi: ${esc(m)}</div>`;
+  }
+  finally{ btnReset(btn); }
+}
+
+async function loadAccountList(){
+  const el = document.getElementById('accountList');
+  const filter = document.getElementById('acFilterRole') ? document.getElementById('acFilterRole').value : 'all';
+  let q = db.collection('users').where('role','in', ['gvcn','hs','cd','bch']);
+  const snap = await q.get();
+  let docs = snap.docs.map(d => ({id:d.id, ...d.data()}));
+  if(filter === 'deleted'){
+    docs = docs.filter(d => d.deleted);
+  } else {
+    docs = docs.filter(d => !d.deleted);
+    if(filter !== 'all') docs = docs.filter(d => d.role === filter);
+  }
+  docs.sort((a,b) => (a.name||'').localeCompare(b.name||''));
+  if(docs.length === 0){
+    el.innerHTML = `<div class="empty">${filter === 'deleted' ? 'Chưa có tài khoản nào bị xóa.' : 'Không có tài khoản nào.'}</div>`;
+    return;
+  }
+  el.innerHTML = `<div class="table-wrap"><table><thead><tr><th>Họ tên</th><th>Vai trò</th><th>Lớp</th><th>Mã</th><th></th></tr></thead><tbody>
+    ${docs.map(u => {
+      const classInfo = u.classId ? className(u.classId) : (u.classIds && u.classIds.length ? u.classIds.map(className).join(', ') : '—');
+      const isDeleted = !!u.deleted;
+      return `<tr${isDeleted ? ' style="opacity:.55;"' : ''}>
+        <td>${esc(u.name)}${isDeleted ? ' <span class="pill rejected">Đã xóa</span>' : ''}</td>
+        <td><span class="badge-role">${ROLE_LABEL[u.role]}</span></td>
+        <td>${esc(classInfo)}</td>
+        <td class="mono">${esc(codeFromEmail(u.email))}</td>
+        <td style="text-align:right;white-space:nowrap;">
+          <div class="row-actions">
+          ${isDeleted
+            ? `<button class="btn-icon forest" onclick="restoreAccount('${u.id}')" title="Khôi phục tài khoản" aria-label="Khôi phục tài khoản"><i class="fas fa-rotate-left"></i></button>`
+            : `<button class="btn-icon accent" onclick="viewCredentials('${u.id}')" title="Quản lý mật khẩu" aria-label="Quản lý mật khẩu"><i class="fas fa-key"></i></button>
+               <button class="btn-icon" onclick="editAccount('${u.id}')" title="Sửa tài khoản" aria-label="Sửa tài khoản"><i class="fas fa-pen"></i></button>
+               <button class="btn-icon danger" onclick="deleteAccount('${u.id}')" title="Xóa tài khoản" aria-label="Xóa tài khoản"><i class="fas fa-trash"></i></button>`}
+          </div>
+        </td>
+      </tr>`;
+    }).join('')}
+  </tbody></table></div>`;
+}
+
+async function editAccount(uid){
+  const doc = await db.collection('users').doc(uid).get();
+  const u = doc.data();
+  const needHome = (u.role === 'hs' || u.role === 'cd' || u.role === 'bch');
+  const needIds = (u.role === 'gvcn' || u.role === 'cd');
+  openModal(`
+    <h3><i class="fas fa-user-pen" style="color:var(--sky);margin-right:6px;"></i>Sửa tài khoản</h3>
+    <div id="editMsg"></div>
+    <div class="field"><label>Họ và tên</label><input id="edName" type="text" value="${esc(u.name)}"></div>
+    ${needHome ? `<div class="field"><label>Lớp của học sinh</label><select id="edHomeClass">
+        ${state.classesCache.map(c => `<option value="${c.id}" ${c.id===u.classId?'selected':''}>${esc(c.name)}</option>`).join('')}
+      </select></div>` : ''}
+    ${needIds ? `<div class="field"><label>${u.role==='gvcn'?'Lớp chủ nhiệm':'Lớp được phân công giám sát'}</label>
+      <div class="check-grid" id="edClassIds">
+        ${state.classesCache.map(c => `<label><input type="checkbox" value="${c.id}" ${(u.classIds||[]).includes(c.id)?'checked':''}> ${esc(c.name)}</label>`).join('')}
+      </div></div>` : ''}
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal()"><i class="fas fa-xmark"></i>Hủy</button>
+      <button class="btn btn-accent" onclick="saveAccountEdit('${uid}', ${needHome}, ${needIds})"><i class="fas fa-check"></i>Lưu</button>
+    </div>
+  `);
+}
+
+async function saveAccountEdit(uid, needHome, needIds){
+  const name = document.getElementById('edName').value.trim();
+  const update = { name };
+  if(needHome) update.classId = document.getElementById('edHomeClass').value;
+  if(needIds) update.classIds = Array.from(document.querySelectorAll('#edClassIds input:checked')).map(i => i.value);
+  try{
+    await db.collection('users').doc(uid).update(update);
+    closeModal();
+    loadAccountList();
+  }catch(e){ document.getElementById('editMsg').innerHTML = `<div class="msg err">Lỗi: ${esc(e.message)}</div>`; }
+}
+
+async function deleteAccount(uid){
+  const ok = confirm('Xóa tài khoản này khỏi hệ thống?\n\nTài khoản sẽ ngừng hoạt động ngay lập tức, không còn hiển thị trong danh sách hay số liệu thống kê.\n\nLưu ý: do giới hạn của Firebase Authentication phía trình duyệt, hệ thống không thể xóa vĩnh viễn thông tin đăng nhập — vì vậy mã đăng nhập này sẽ KHÔNG thể dùng lại để tạo tài khoản mới. Bạn có thể "Khôi phục" tài khoản này bất cứ lúc nào nếu xóa nhầm.');
+  if(!ok) return;
+  await db.collection('users').doc(uid).update({ deleted:true, deletedAt: firebase.firestore.FieldValue.serverTimestamp() });
+  loadAccountList();
+}
+
+async function restoreAccount(uid){
+  await db.collection('users').doc(uid).update({ deleted:false, deletedAt:null });
+  loadAccountList();
+}
+
+/* ---------- Xem / đặt lại mật khẩu ----------
+   Admin: xem & đặt lại mật khẩu mọi tài khoản.
+   GVCN: xem & đặt lại mật khẩu học sinh (HS) thuộc lớp mình (quyền được kiểm soát ở Firestore Rules
+   qua collection "credentials"). Cơ chế: mật khẩu hiện tại được lưu song song trong Firestore khi tạo
+   tài khoản; với tài khoản cũ chưa có mật khẩu lưu, hệ thống mặc định mật khẩu = mã đăng nhập và lưu
+   bổ sung lại vào Firestore ngay khi được xem lần đầu. Việc "đặt lại mật khẩu" được thực hiện bằng cách
+   đăng nhập tạm thời vào tài khoản đó (qua mật khẩu hiện đang lưu) trên một phiên phụ, đổi mật khẩu,
+   rồi đăng xuất — vì SDK phía trình duyệt không có quyền đặt mật khẩu cho tài khoản khác trực tiếp. ---------- */
+async function viewCredentials(uid){
+  openModal(`<h3><i class="fas fa-key" style="color:var(--sky);margin-right:6px;"></i>Thông tin đăng nhập</h3><div id="credBody">${loading()}</div>`);
+  const credBody = document.getElementById('credBody');
+  try{
+    const uDoc = await db.collection('users').doc(uid).get();
+    if(!uDoc.exists){ credBody.innerHTML = `<div class="msg err">Không tìm thấy tài khoản.</div>`; return; }
+    const u = uDoc.data();
+    const code = codeFromEmail(u.email);
+    let pw;
+    const credDoc = await db.collection('credentials').doc(uid).get();
+    if(credDoc.exists && credDoc.data().password){
+      pw = credDoc.data().password;
+    } else {
+      pw = code; // tài khoản cũ chưa có cơ chế lưu mật khẩu — mặc định bằng mã đăng nhập
+      await db.collection('credentials').doc(uid).set({
+        password: pw, updatedAt: firebase.firestore.FieldValue.serverTimestamp(), migrated:true
+      });
+    }
+    document.getElementById('credBody').innerHTML = `
+      <div class="field"><label>Họ và tên</label><div style="font-weight:600;">${esc(u.name)}</div></div>
+      <div class="field"><label>Mã đăng nhập</label><div class="mono">${esc(code)}</div></div>
+      <div class="field">
+        <label>Mật khẩu hiện tại</label>
+        <div class="mono" style="font-size:16px;background:var(--sky-soft);color:var(--sky-deep);
+          padding:9px 13px;border-radius:9px;display:inline-block;letter-spacing:.02em;">${esc(pw)}</div>
+      </div>
+      <div class="divider"></div>
+      <label>Đặt mật khẩu mới</label>
+      <div style="display:flex;gap:8px;">
+        <input id="newPwInput" type="text" value="${randomPw()}">
+        <button type="button" class="btn-icon" style="width:44px;height:44px;flex-shrink:0;" title="Tạo mật khẩu ngẫu nhiên" aria-label="Tạo mật khẩu ngẫu nhiên" onclick="document.getElementById('newPwInput').value=randomPw()"><i class="fas fa-dice"></i></button>
+      </div>
+      <div class="hint">Tối thiểu 6 ký tự. Học sinh/tài khoản sẽ cần dùng mật khẩu mới này ở lần đăng nhập tiếp theo.</div>
+      <div id="resetMsg" style="margin-top:10px;"></div>
+      <div class="modal-actions">
+        <button class="btn btn-outline" onclick="closeModal()"><i class="fas fa-xmark"></i>Đóng</button>
+        <button class="btn btn-accent" id="resetPwBtn" onclick="doResetPassword('${uid}','${esc(u.email)}')"><i class="fas fa-rotate"></i>Đặt lại mật khẩu</button>
+      </div>
+    `;
+  }catch(e){
+    credBody.innerHTML = `<div class="msg err">Lỗi: ${esc(e.message)}${e.code === 'permission-denied' ? ' (bạn không có quyền xem tài khoản này)' : ''}</div>`;
+  }
+}
+
+async function doResetPassword(uid, email){
+  const input = document.getElementById('newPwInput');
+  const newPw = input.value;
+  const msg = document.getElementById('resetMsg');
+  const btn = document.getElementById('resetPwBtn');
+  msg.innerHTML = '';
+  if(!newPw || newPw.length < 6){ msg.innerHTML = `<div class="msg err">Mật khẩu mới phải từ 6 ký tự trở lên.</div>`; return; }
+  btnLoading(btn, 'Đang đặt lại…');
+  try{
+    const credDoc = await db.collection('credentials').doc(uid).get();
+    const currentPw = credDoc.exists ? credDoc.data().password : null;
+    if(!currentPw) throw new Error('Không tìm thấy mật khẩu hiện tại được lưu trong hệ thống để xác thực.');
+    await secondaryAuth.signInWithEmailAndPassword(email, currentPw);
+    await secondaryAuth.currentUser.updatePassword(newPw);
+    await secondaryAuth.signOut();
+    await db.collection('credentials').doc(uid).set({
+      password: newPw, updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    msg.innerHTML = `<div class="msg ok">Đã đặt lại mật khẩu thành công.</div>`;
+    input.value = newPw;
+  }catch(e){
+    let m = e.message;
+    if(e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential' || e.code === 'auth/invalid-login-credentials'){
+      m = 'Mật khẩu lưu trong hệ thống không khớp với mật khẩu thực tế của tài khoản (có thể tài khoản đã được đổi mật khẩu bằng cách khác). Không thể tự động đặt lại — vui lòng liên hệ hỗ trợ kỹ thuật.';
+    }
+    msg.innerHTML = `<div class="msg err">Lỗi: ${esc(m)}</div>`;
+    try{ await secondaryAuth.signOut(); }catch(_ignored){}
+  }
+  finally{ btnReset(btn); }
+}
+
+/* ---------- Excel import (dùng trong popup "Tạo nhanh") ---------- */
+function downloadTemplate(){
+  const wsData = [
+    ['LoaiTaiKhoan','HoTen','Lop','MaDangNhap','MatKhau','LopPhuTrach'],
+    ['HS','Nguyễn Văn A','5A1','hs5a1_01','ns123456',''],
+    ['CD','Lê Văn C','5A1','cd5a1_01','ns123456','5A1;5A2'],
+    ['BCH','Phạm Thị D','5A1','bch5a1_01','ns123456',''],
+    ['GVCN','Trần Thị B','','gvcn_5a1','ns123456','5A1'],
+  ];
+  const ws = XLSX.utils.aoa_to_sheet(wsData);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Mau');
+  XLSX.writeFile(wb, 'mau_nhap_tai_khoan.xlsx');
+}
+
+function handleExcelFile(e){
+  const file = e.target.files[0];
+  const nameEl = document.getElementById('importFileName');
+  if(!file){ if(nameEl) nameEl.textContent = 'Chưa chọn file nào'; return; }
+  if(nameEl) nameEl.textContent = file.name;
+  const reader = new FileReader();
+  reader.onload = (evt) => {
+    const data = new Uint8Array(evt.target.result);
+    const wb = XLSX.read(data, {type:'array'});
+    const ws = wb.Sheets[wb.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(ws, {defval:''});
+    state.importRows = rows;
+    renderImportPreview();
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function renderImportPreview(){
+  const rows = state.importRows || [];
+  const el = document.getElementById('importPreview');
+  if(rows.length === 0){ el.innerHTML = `<div class="msg err">File không có dữ liệu.</div>`; return; }
+  el.innerHTML = `
+    <div class="msg info">Đọc được ${rows.length} dòng. Kiểm tra sơ bộ rồi bấm xử lý.</div>
+    <div style="max-height:220px;overflow:auto;border:1px solid var(--line);border-radius:9px;margin-bottom:12px;">
+      <table><thead><tr><th>Loại</th><th>Họ tên</th><th>Lớp</th><th>Mã</th></tr></thead><tbody>
+      ${rows.slice(0,50).map(r => `<tr><td>${esc(r.LoaiTaiKhoan)}</td><td>${esc(r.HoTen)}</td><td>${esc(r.Lop)}</td><td class="mono">${esc(r.MaDangNhap)}</td></tr>`).join('')}
+      </tbody></table>
+    </div>
+    <button class="btn btn-accent" id="processImportBtn" onclick="processImport()"><i class="fas fa-gears"></i>Xử lý & tạo tài khoản</button>
+    <div id="importLog" class="import-log" style="margin-top:12px;display:none;"></div>
+  `;
+}
+
+async function getOrCreateClassByName(name, cache){
+  name = (name||'').trim();
+  if(!name) return null;
+  let found = state.classesCache.find(c => c.name.toLowerCase() === name.toLowerCase());
+  if(found) return found.id;
+  const docRef = await db.collection('classes').add({ name, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+  const rec = { id: docRef.id, name };
+  state.classesCache.push(rec);
+  return rec.id;
+}
+
+async function processImport(){
+  const rows = state.importRows || [];
+  const btn = document.getElementById('processImportBtn');
+  const log = document.getElementById('importLog');
+  log.style.display = 'block';
+  log.textContent = '';
+  btn.disabled = true;
+  let ok = 0, fail = 0;
+  for(const r of rows){
+    const typeRaw = (r.LoaiTaiKhoan||'').toString().trim().toUpperCase();
+    const roleMap = { HS:'hs', CD:'cd', BCH:'bch', GVCN:'gvcn' };
+    const role = roleMap[typeRaw];
+    const name = (r.HoTen||'').toString().trim();
+    const code = (r.MaDangNhap||'').toString().trim().toLowerCase().replace(/\s+/g,'');
+    const pw = (r.MatKhau||'').toString().trim();
+    if(!role || !name || !code || pw.length < 6){
+      log.textContent += `✗ Bỏ qua dòng "${name||code||'?'}": thiếu dữ liệu hoặc loại tài khoản không hợp lệ.\n`;
+      fail++; continue;
+    }
+    try{
+      let classId = null, classIds = [];
+      if(role === 'hs' || role === 'cd' || role === 'bch'){
+        classId = await getOrCreateClassByName(r.Lop);
+        if(!classId){ throw new Error('thiếu tên lớp'); }
+      }
+      if(role === 'gvcn' || role === 'cd'){
+        const list = (r.LopPhuTrach||'').toString().split(';').map(s => s.trim()).filter(Boolean);
+        for(const ln of list){ const id = await getOrCreateClassByName(ln); if(id) classIds.push(id); }
+      }
+      const email = `${code}@${EMAIL_DOMAIN}`;
+      const accountType = role === 'gvcn' ? 'teacher' : 'student';
+      const cred = await secondaryAuth.createUserWithEmailAndPassword(email, pw);
+      await db.collection('users').doc(cred.user.uid).set({
+        accountType, role, name, email, classId, classIds,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      await db.collection('credentials').doc(cred.user.uid).set({
+        password: pw, updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      await secondaryAuth.signOut();
+      log.textContent += `✓ ${name} (${role.toUpperCase()}) — mã ${code}\n`;
+      ok++;
+    }catch(e){
+      let m = e.code === 'auth/email-already-in-use' ? 'mã đăng nhập đã tồn tại' : e.message;
+      log.textContent += `✗ Lỗi ở "${name}": ${m}\n`;
+      fail++;
+    }
+    log.scrollTop = log.scrollHeight;
+  }
+  log.textContent += `\nHoàn tất: ${ok} thành công, ${fail} lỗi.`;
+  btn.disabled = false;
+  await loadClasses(true);
+  loadAccountList && loadAccountList();
+}
+
+/* ---------- New violation (admin, auto-approved) ---------- */
+/* ---------- Vi phạm (Admin): danh sách chờ duyệt + popup lập phiếu ---------- */
+async function renderAdminViolationsTab(body){
+  body.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px;">
+      <h2 style="margin:0;font-size:19px;color:var(--sky-deep);"><i class="fas fa-triangle-exclamation" style="margin-right:8px;"></i>Vi phạm chờ duyệt</h2>
+      <button class="btn-fab" onclick="openAdminViolationModal()" title="Lập phiếu vi phạm mới" aria-label="Lập phiếu vi phạm mới"><i class="fas fa-plus"></i></button>
+    </div>
+    <div id="approveList">${loading()}</div>`;
+  await loadApproveList(true);
+}
+
+function openAdminViolationModal(){
+  openModal(`
+    <h3 style="margin-top:0;"><i class="fas fa-file-circle-plus" style="color:var(--sky);margin-right:6px;"></i>Lập phiếu vi phạm</h3>
+    <div id="newvMsg"></div>
+    <div class="field"><label>Chọn lớp</label><select id="nvClass" onchange="loadNvStudents()">
+      ${state.classesCache.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('')}
+    </select></div>
+    <div class="field"><label>Chọn học sinh</label><select id="nvStudent"><option>Đang tải…</option></select></div>
+    <div class="field"><label>Nội dung vi phạm</label><textarea id="nvContent" placeholder="Mô tả cụ thể hành vi vi phạm, thời gian, địa điểm…"></textarea></div>
+    <div class="field"><label>Điểm trừ</label><input id="nvPoints" type="number" value="5" min="0"></div>
+    <div class="confirm-row" style="margin-bottom:14px;">
+      <input type="checkbox" id="nvRequireStatement" checked>
+      <div class="ctext">Yêu cầu học sinh viết bản tường trình khi xác nhận</div>
+    </div>
+    <div class="hint" style="margin-bottom:14px;">Phiếu do Quản trị viên lập sẽ được duyệt tự động và hiện ngay cho học sinh xác nhận.</div>
+    <div class="modal-actions" style="justify-content:space-between;">
+      <button class="btn btn-outline" onclick="closeModal()"><i class="fas fa-xmark"></i>Đóng</button>
+      <button class="btn btn-accent" id="nvSubmitBtn" onclick="createViolation()"><i class="fas fa-check-double"></i>Lập phiếu (duyệt ngay)</button>
+    </div>
+  `);
+  loadNvStudents();
+}
+
+async function loadNvStudents(){
+  const classId = document.getElementById('nvClass').value;
+  const sel = document.getElementById('nvStudent');
+  sel.innerHTML = `<option>Đang tải…</option>`;
+  if(!classId){ sel.innerHTML = `<option value="">Chưa có lớp</option>`; return; }
+  const snap = await db.collection('users').where('classId','==', classId).get();
+  const docs = snap.docs.map(d => ({id:d.id, ...d.data()})).filter(d => !d.deleted).sort((a,b)=>(a.name||'').localeCompare(b.name||''));
+  if(docs.length === 0){ sel.innerHTML = `<option value="">Lớp chưa có học sinh</option>`; return; }
+  sel.innerHTML = docs.map(s => `<option value="${s.id}" data-name="${esc(s.name)}">${esc(s.name)} (${ROLE_LABEL[s.role]})</option>`).join('');
+}
+
+async function createViolation(){
+  const classId = document.getElementById('nvClass').value;
+  const sel = document.getElementById('nvStudent');
+  const content = document.getElementById('nvContent').value.trim();
+  const points = Number(document.getElementById('nvPoints').value) || 0;
+  const msg = document.getElementById('newvMsg');
+  msg.innerHTML = '';
+  if(!classId || !sel.value || !content){ msg.innerHTML = `<div class="msg err">Vui lòng chọn lớp, học sinh và nhập nội dung.</div>`; return; }
+  const opt = sel.options[sel.selectedIndex];
+  const requireStatement = document.getElementById('nvRequireStatement').checked;
+  const btn = document.getElementById('nvSubmitBtn');
+  btnLoading(btn, 'Đang lập phiếu…');
+  try{
+    await db.collection('violations').add({
+      studentUid: sel.value, studentName: opt.dataset.name, classId, className: className(classId),
+      content, points, status:'approved', requireStatement,
+      createdByUid: state.user.uid, createdByName: state.profile.name, createdByRole:'admin',
+      reviewedByUid: state.user.uid, reviewedByName: state.profile.name, reviewedAt: firebase.firestore.FieldValue.serverTimestamp(), reviewNote:'',
+      confirmed:false, confirmedAt:null, statement:'',
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    msg.innerHTML = `<div class="msg ok">Đã lập phiếu cho ${esc(opt.dataset.name)}.</div>`;
+    document.getElementById('nvContent').value = '';
+  }catch(e){ msg.innerHTML = `<div class="msg err">Lỗi: ${esc(e.message)}</div>`; }
+  finally{ btnReset(btn); }
+}
+
+/* ---------- Approve tab (admin & bch share this renderer) ---------- */
+async function renderApproveTab(body, isAdminView){
+  body.innerHTML = `<div id="approveList">${loading()}</div>`;
+  await loadApproveList(isAdminView);
+}
+
+async function loadApproveList(isAdminView){
+  const el = document.getElementById('approveList');
+  let snap = await db.collection('violations').where('status','==','pending_approval').orderBy('createdAt','desc').get();
+  let docs = snap.docs.map(d => ({id:d.id, ...d.data()}));
+  if(!isAdminView){
+    docs = docs.filter(d => d.classId !== state.profile.classId);
+  }
+  if(docs.length === 0){ el.innerHTML = `<div class="empty">Không có vi phạm nào đang chờ duyệt.</div>`; return; }
+  el.innerHTML = docs.map(v => `
+    <div class="slip">
+      <div class="slip-head">
+        <div><div class="who">${esc(v.studentName)} — ${esc(v.className)}
+          ${v.requireStatement ? `<span class="pill pending" style="margin-left:6px;"><i class="fas fa-pen-nib" style="margin-right:3px;"></i>Cần tường trình</span>` : `<span class="pill confirmed" style="margin-left:6px;">Không cần tường trình</span>`}</div></div>
+        <div><span class="pill pending">Chờ duyệt</span></div>
+      </div>
+      <div class="slip-meta">
+        <div class="item"><span class="k">Tên người vi phạm</span><span class="v">${esc(v.studentName)} (${esc(v.className)})</span></div>
+        <div class="item"><span class="k">Tên người báo cáo</span><span class="v">${esc(v.createdByName||'—')} (${esc(ROLE_LABEL[v.createdByRole]||v.createdByRole||'')})</span></div>
+        <div class="item"><span class="k">Thời gian</span><span class="v">${fmtDate(v.createdAt)}</span></div>
+        <div class="item"><span class="k">Số điểm trừ</span><span class="v mono">${v.points}</span></div>
+      </div>
+      <label class="content-label">Nội dung vi phạm</label>
+      <div class="slip-content">${esc(v.content)}</div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-accent" onclick="reviewViolation('${v.id}', 'approved')"><i class="fas fa-check"></i>Duyệt</button>
+        <button class="btn btn-danger" onclick="reviewViolation('${v.id}', 'rejected')"><i class="fas fa-xmark"></i>Từ chối</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function reviewViolation(id, status){
+  const note = status === 'rejected' ? (prompt('Ghi chú lý do từ chối (không bắt buộc):','') || '') : '';
+  try{
+    await db.collection('violations').doc(id).update({
+      status, reviewedByUid: state.user.uid, reviewedByName: state.profile.name,
+      reviewedAt: firebase.firestore.FieldValue.serverTimestamp(), reviewNote: note
+    });
+    routeToApp();
+  }catch(e){ alert('Lỗi: ' + e.message); }
+}
+
+
+/* ---------- Full log (admin) ---------- */
+async function renderLogTab(body){
+  body.innerHTML = `
+    <div class="card" style="margin-bottom:18px;">
+      <div class="row">
+        <div><label>Lớp</label><select id="logClass" onchange="loadLog()">
+          <option value="all">Tất cả</option>
+          ${state.classesCache.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('')}
+        </select></div>
+        <div><label>Trạng thái</label><select id="logStatus" onchange="loadLog()">
+          <option value="all">Tất cả</option>
+          <option value="pending_approval">Chờ duyệt</option>
+          <option value="approved">Đã duyệt</option>
+          <option value="rejected">Đã từ chối</option>
+        </select></div>
+      </div>
+    </div>
+    <div id="logList">${loading()}</div>`;
+  loadLog();
+}
+
+async function loadLog(){
+  const classId = document.getElementById('logClass').value;
+  const status = document.getElementById('logStatus').value;
+  const el = document.getElementById('logList');
+  el.innerHTML = `${loading()}`;
+  let snap = await db.collection('violations').orderBy('createdAt','desc').get();
+  let docs = snap.docs.map(d => ({id:d.id, ...d.data()}));
+  if(classId !== 'all') docs = docs.filter(d => d.classId === classId);
+  if(status !== 'all') docs = docs.filter(d => d.status === status);
+  el.innerHTML = renderSimpleViolationList(docs, {showStudent:true, showInfo:true});
+}
+
+function statusPill(v){
+  if(v.status === 'pending_approval') return `<span class="pill pending">Chờ duyệt</span>`;
+  if(v.status === 'rejected') return `<span class="pill rejected">Từ chối</span>`;
+  return v.confirmed ? `<span class="pill confirmed">HS đã xác nhận</span>` : `<span class="pill approved">Đã duyệt</span>`;
+}
+
+function violationSlipHtml(v, showStudent){
+  const reviewerLabel = v.status === 'rejected' ? 'Người từ chối' : 'Người duyệt';
+  return `
+  <div class="slip">
+    <div class="slip-head">
+      <div><div class="who">${showStudent ? esc(v.studentName)+' — '+esc(v.className) : 'Nội dung vi phạm'}
+        ${v.requireStatement ? `<span class="pill pending" style="margin-left:6px;"><i class="fas fa-pen-nib" style="margin-right:3px;"></i>Cần tường trình</span>` : `<span class="pill confirmed" style="margin-left:6px;">Không cần tường trình</span>`}</div></div>
+      <div>${statusPill(v)}</div>
+    </div>
+    <div class="slip-meta">
+      ${showStudent ? `<div class="item"><span class="k">Tên người vi phạm</span><span class="v">${esc(v.studentName)} (${esc(v.className)})</span></div>` : ''}
+      <div class="item"><span class="k">Tên người báo cáo</span><span class="v">${esc(v.createdByName||'—')} (${esc(ROLE_LABEL[v.createdByRole]||v.createdByRole||'')})</span></div>
+      ${v.reviewedByName ? `<div class="item"><span class="k">${reviewerLabel}</span><span class="v">${esc(v.reviewedByName)}</span></div>` : ''}
+      <div class="item"><span class="k">Thời gian</span><span class="v">${fmtDate(v.createdAt)}</span></div>
+      ${v.reviewedByName ? `<div class="item"><span class="k">Thời gian duyệt/từ chối</span><span class="v">${fmtDate(v.reviewedAt)}</span></div>` : ''}
+      <div class="item"><span class="k">Số điểm trừ</span><span class="v mono">${v.points||0}</span></div>
+    </div>
+    <label class="content-label">Nội dung vi phạm</label>
+    <div class="slip-content">${esc(v.content)}</div>
+    ${v.status==='rejected' && v.reviewNote ? `<div class="meta" style="margin-top:6px;">Lý do từ chối: ${esc(v.reviewNote)}</div>` : ''}
+    ${v.confirmed && v.requireStatement ? `
+      <div class="divider"></div>
+      <label class="content-label">Bản tường trình</label>
+      <div class="slip-content" style="background:var(--sky-soft);padding:10px 12px;border-radius:8px;">${esc(v.statement) || '(không có nội dung)'}</div>
+      <div class="meta" style="margin-top:8px;">Xác nhận lúc ${fmtDate(v.confirmedAt)}</div>
+    ` : (v.confirmed ? `<div class="meta" style="margin-top:8px;">Xác nhận lúc ${fmtDate(v.confirmedAt)}</div>` : '')}
+  </div>`;
+}
+
+/* ---------- Danh sách vi phạm dạng gọn (dùng ở Sổ theo dõi, lịch sử HS/Cờ đỏ…) ----------
+   showStudent: có hiển thị tên HS/lớp trên mỗi dòng hay không.
+   showInfo: có hiển thị icon "i" để mở popup chi tiết hay không (GVCN không cần icon này). ---------- */
+function renderSimpleViolationList(docs, opts){
+  opts = opts || {};
+  const showStudent = opts.showStudent !== false;
+  const showInfo = opts.showInfo !== false;
+  if(!docs || docs.length === 0) return `<div class="empty">Không có phiếu nào.</div>`;
+  docs.forEach(v => { state.violationCache[v.id] = v; });
+  return `<div class="simple-list">${docs.map(v => {
+    const {weekday, date} = fmtDay(v.createdAt);
+    return `<div class="simple-row">
+      <div class="day"><b>${weekday}</b>${date}</div>
+      <div class="body">
+        <div class="nm">${showStudent ? esc(v.studentName) + (v.className ? ' — '+esc(v.className) : '') : ''} ${statusPill(v)} ${v.requireStatement ? `<i class="fas fa-pen-nib" style="color:var(--ink-faint);font-size:11px;margin-left:2px;" title="Cần tường trình"></i>` : ''}</div>
+        <div class="ct">${esc(v.content)}</div>
+      </div>
+      <div class="pts">-${v.points||0}</div>
+      ${showInfo ? `<button class="info-btn" title="Thông tin chi tiết" aria-label="Thông tin chi tiết" onclick="showViolationDetail('${v.id}')"><i class="fas fa-circle-info"></i></button>` : ''}
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function showViolationDetail(id){
+  const v = state.violationCache[id];
+  if(!v){ return; }
+  openModal(`${violationSlipHtml(v, true)}<div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()"><i class="fas fa-xmark"></i>Đóng</button></div>`);
+}
+
+/* ================================================================
+   GVCN APP
+   ================================================================ */
+const GVCN_TABS = [
+  {key:'roster', label:'Danh sách lớp'},
+  {key:'violations', label:'Danh sách vi phạm'},
+];
+
+async function renderGvcn(){
+  if(!state.tab) state.tab = 'roster';
+  root.innerHTML = `${topbar()}<div class="shell">${tabsBar(GVCN_TABS)}<div id="tabBody">${loading()}</div></div>`;
+  const body = document.getElementById('tabBody');
+  if(state.tab === 'roster') return renderGvcnRosterTab(body);
+  if(state.tab === 'violations') return renderGvcnViolationsTab(body);
+}
+
+function gvcnClassSelectHtml(){
+  const classIds = state.profile.classIds || [];
+  if(classIds.length <= 1) return '';
+  return `
+    <div class="field" style="max-width:280px;margin-bottom:18px;">
+      <label>Lớp chủ nhiệm</label>
+      <select id="gvcnClass" onchange="onGvcnClassChange()">
+        ${classIds.map(id => `<option value="${id}" ${id===state.selectedClassId?'selected':''}>${esc(className(id))}</option>`).join('')}
+      </select>
+    </div>`;
+}
+
+function onGvcnClassChange(){ state.selectedClassId = document.getElementById('gvcnClass').value; renderGvcn(); }
+
+/* ---------- Tab 1: Danh sách lớp (xếp hạng + roster 5 cột) ---------- */
+async function renderGvcnRosterTab(body){
+  const classIds = state.profile.classIds || [];
+  if(!state.selectedClassId || !classIds.includes(state.selectedClassId)){
+    state.selectedClassId = classIds[0] || null;
+  }
+  body.innerHTML = `
+    ${gvcnClassSelectHtml()}
+    <div id="gvcnRankLine" class="rank-line">${loading('Đang tính xếp hạng…')}</div>
+    <div class="card">
+      <h3 style="margin-top:0;"><i class="fas fa-list-ol" style="color:var(--sky);margin-right:6px;"></i>Danh sách học sinh${state.selectedClassId ? ' — '+esc(className(state.selectedClassId)) : ''}</h3>
+      <div id="gvcnRosterTable">${loading()}</div>
+    </div>
+  `;
+  if(!state.selectedClassId){
+    document.getElementById('gvcnRankLine').innerHTML = '';
+    document.getElementById('gvcnRosterTable').innerHTML = `<div class="empty">Bạn chưa được phân công chủ nhiệm lớp nào. Vui lòng liên hệ Quản trị viên.</div>`;
+    return;
+  }
+  loadGvcnRankLine();
+  loadGvcnRosterTable();
+}
+
+async function loadGvcnRankLine(){
+  const el = document.getElementById('gvcnRankLine');
+  try{
+    const snap = await db.collection('violations').where('status','==','approved').get();
+    const totals = {};
+    snap.forEach(d => {
+      const v = d.data();
+      if(!v.classId) return;
+      totals[v.classId] = (totals[v.classId]||0) + (v.points||0);
+    });
+    const ranked = state.classesCache.map(c => ({ id:c.id, name:c.name, score: 100 - (totals[c.id]||0) }))
+      .sort((a,b) => b.score - a.score);
+    const idx = ranked.findIndex(c => c.id === state.selectedClassId);
+    const rank = idx >= 0 ? idx + 1 : '—';
+    const myScore = idx >= 0 ? ranked[idx].score : '—';
+    el.innerHTML = `<span class="trophy"><i class="fas fa-trophy"></i></span> Xếp hạng <b>#${rank}</b>. Điểm nề nếp: <b class="mono">${myScore}</b>`;
+  }catch(e){
+    el.innerHTML = `<span style="color:var(--crimson);">Không tính được xếp hạng: ${esc(e.message)}</span>`;
+  }
+}
+
+async function loadGvcnRosterTable(){
+  const el = document.getElementById('gvcnRosterTable');
+  const [studentsSnap, violSnap] = await Promise.all([
+    db.collection('users').where('classId','==', state.selectedClassId).where('role','==','hs').get(),
+    db.collection('violations').where('classId','==', state.selectedClassId).where('status','==','approved').get()
+  ]);
+  const students = studentsSnap.docs.map(d => ({id:d.id, ...d.data()})).filter(d => !d.deleted)
+    .sort((a,b) => (a.name||'').localeCompare(b.name||''));
+  if(students.length === 0){ el.innerHTML = `<div class="empty">Lớp chưa có học sinh.</div>`; return; }
+
+  const now = new Date();
+  const thisWeekKey = weekInfo(now).key;
+  const lastWeekBase = new Date(now); lastWeekBase.setDate(lastWeekBase.getDate() - 7);
+  const lastWeekKey = weekInfo(lastWeekBase).key;
+
+  const stats = {};
+  violSnap.forEach(d => {
+    const v = d.data();
+    const uid = v.studentUid;
+    if(!uid) return;
+    if(!stats[uid]) stats[uid] = { total:0, thisWeek:0, lastWeek:0 };
+    stats[uid].total++;
+    const wk = weekInfo(toDateObj(v.createdAt || now)).key;
+    if(wk === thisWeekKey) stats[uid].thisWeek++;
+    else if(wk === lastWeekKey) stats[uid].lastWeek++;
+  });
+
+  el.innerHTML = `<div class="table-wrap"><table><thead><tr>
+      <th>STT</th><th>Họ và tên HS</th><th>Vi phạm tuần này</th><th>Vi phạm tuần trước</th><th>Tổng số vi phạm</th><th></th>
+    </tr></thead><tbody>
+    ${students.map((s,i) => {
+      const st = stats[s.id] || { total:0, thisWeek:0, lastWeek:0 };
+      return `<tr>
+        <td>${i+1}</td>
+        <td>${esc(s.name)}</td>
+        <td class="mono">${st.thisWeek}</td>
+        <td class="mono">${st.lastWeek}</td>
+        <td class="mono">${st.total}</td>
+        <td style="text-align:right;"><button class="info-btn" title="Quản lý mật khẩu" aria-label="Quản lý mật khẩu" onclick="viewCredentials('${s.id}')"><i class="fas fa-key"></i></button></td>
+      </tr>`;
+    }).join('')}
+  </tbody></table></div>
+  <div class="hint" style="margin-top:10px;">Tổng số vi phạm tính từ trước đến nay. Tuần này/Tuần trước tính theo tuần từ Thứ Hai đến Chủ Nhật.</div>`;
+}
+
+/* ---------- Tab 2: Danh sách vi phạm (giữ nguyên như trang GVCN trước đây) ---------- */
+async function renderGvcnViolationsTab(body){
+  const classIds = state.profile.classIds || [];
+  if(!state.selectedClassId || !classIds.includes(state.selectedClassId)){
+    state.selectedClassId = classIds[0] || null;
+  }
+  body.innerHTML = `
+    ${gvcnClassSelectHtml()}
+    <h2 style="margin-top:0;"><i class="fas fa-triangle-exclamation" style="color:var(--sky);margin-right:6px;"></i>Nề nếp lớp ${state.selectedClassId ? esc(className(state.selectedClassId)) : ''}</h2>
+    <div id="gvcnBody">${loading()}</div>
+  `;
+  if(!state.selectedClassId){
+    document.getElementById('gvcnBody').innerHTML = `<div class="empty">Bạn chưa được phân công chủ nhiệm lớp nào. Vui lòng liên hệ Quản trị viên.</div>`;
+    return;
+  }
+  loadGvcnData();
+}
+
+async function loadGvcnData(){
+  const el = document.getElementById('gvcnBody');
+  const snap = await db.collection('violations')
+    .where('classId','==', state.selectedClassId)
+    .where('status','==','approved')
+    .orderBy('createdAt','desc').get();
+  const docs = snap.docs.map(d => ({id:d.id, ...d.data()}));
+  if(docs.length === 0){ el.innerHTML = `<div class="empty">Chưa có vi phạm nào được ghi nhận cho lớp này.</div>`; return; }
+
+  const weeks = {};
+  docs.forEach(v => {
+    const dt = toDateObj(v.createdAt || new Date());
+    const info = weekInfo(dt);
+    if(!weeks[info.key]) weeks[info.key] = { label: info.label, items: [], monday: info.monday };
+    weeks[info.key].items.push(v);
+  });
+  const sortedKeys = Object.keys(weeks).sort((a,b) => b.localeCompare(a));
+
+  el.innerHTML = sortedKeys.map(k => {
+    const w = weeks[k];
+    const totalPts = w.items.reduce((s,v) => s + (v.points||0), 0);
+    const score = 100 - totalPts;
+    return `
+    <div class="week-block">
+      <div class="week-header">
+        <div class="wt">${esc(w.label)}</div>
+        <div class="score"><span style="font-size:12.5px;color:#B9C2D4;">Điểm nề nếp tuần</span><span class="n">${score}</span><span style="font-size:12px;color:#B9C2D4;">/100</span></div>
+      </div>
+      <div class="week-body">
+        ${w.items.map(v => {
+          const {weekday, date} = fmtDay(v.createdAt);
+          return `<div class="week-row">
+            <div class="day"><b>${weekday}</b>${date}</div>
+            <div class="body">
+              <div class="nm">${esc(v.studentName)} ${statusPill(v)}</div>
+              <div class="ct">${esc(v.content)}</div>
+            </div>
+            <div class="pts">-${v.points||0}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ================================================================
+   STUDENT APP (HS / Cờ đỏ / BCH)
+   ================================================================ */
+function studentTabs(){
+  const role = state.profile.role;
+  const tabs = [{key:'me', label:'Vi phạm của em'}];
+  if(role === 'cd') tabs.push({key:'violations', label:'Vi phạm'});
+  if(role === 'bch') tabs.push({key:'approve', label:'Duyệt vi phạm'});
+  return tabs;
+}
+
+async function renderStudentApp(){
+  if(!state.tab) state.tab = 'me';
+  if(state.tab === 'addv' || state.tab === 'myreports') state.tab = 'violations';
+  const tabs = studentTabs();
+  root.innerHTML = `${topbar()}<div class="shell">${tabs.length>1 ? tabsBar(tabs) : ''}<div id="tabBody">${loading()}</div></div>`;
+  const body = document.getElementById('tabBody');
+  if(state.tab === 'me') return renderMyViolations(body);
+  if(state.tab === 'violations') return renderCdViolationsTab(body);
+  if(state.tab === 'approve') return renderApproveTab(body, false);
+}
+
+/* ---------- Của em: confirm + statement (UI placeholder for future features) ---------- */
+async function renderMyViolations(body){
+  const snap = await db.collection('violations')
+    .where('studentUid','==', state.user.uid)
+    .where('status','==','approved')
+    .orderBy('createdAt','desc').get();
+  const pending = [], done = [];
+  snap.forEach(d => { const v = {id:d.id, ...d.data()}; (v.confirmed ? done : pending).push(v); });
+
+  body.innerHTML = `
+    <div class="section-title"><h2><i class="fas fa-hourglass-half" style="margin-right:6px;"></i>Phiếu chờ xác nhận</h2><span class="count">${pending.length ? pending.length+' phiếu' : ''}</span></div>
+    <div id="pendingList">${pending.length===0 ? `<div class="empty">Không có phiếu nào đang chờ. 👍</div>` : pending.map(v => `
+      <div class="slip">
+        <div class="stamp">CHỜ XÁC NHẬN</div>
+        <div class="slip-head"><div>
+          <div class="who">Nội dung vi phạm ${v.requireStatement ? `<span class="pill pending" style="margin-left:6px;"><i class="fas fa-pen-nib" style="margin-right:3px;"></i>Cần tường trình</span>` : `<span class="pill confirmed" style="margin-left:6px;">Không cần tường trình</span>`}</div>
+          <div class="meta">Ghi nhận bởi ${esc(v.createdByName||'—')} · ${fmtDate(v.createdAt)}</div>
+        </div></div>
+        <div class="slip-content">${esc(v.content)}</div>
+        <div class="divider"></div>
+        ${v.requireStatement ? `
+        <div class="statement-box">
+          <label>Bản tường trình của em</label>
+          <textarea id="stmt-${v.id}" placeholder="Trình bày lại sự việc, lý do, và cam kết của em… (tính năng đính kèm sẽ được cập nhật sau)"></textarea>
+        </div>` : ''}
+        <div class="confirm-row">
+          <input type="checkbox" id="chk-${v.id}">
+          <div class="ctext">Em xác nhận nội dung vi phạm ở trên là đúng sự thật. Sau khi tích chọn và gửi, em không thể chỉnh sửa lại.</div>
+        </div>
+        <div id="err-${v.id}"></div>
+        <button class="btn btn-accent" id="confirmBtn-${v.id}" style="margin-top:12px;" onclick="submitConfirm('${v.id}', ${!!v.requireStatement})"><i class="fas fa-paper-plane"></i>Gửi xác nhận</button>
+      </div>
+    `).join('')}</div>
+    <div class="section-title"><h2><i class="fas fa-clock-rotate-left" style="margin-right:6px;"></i>Lịch sử đã xác nhận</h2><span class="count">${done.length ? done.length+' phiếu' : ''}</span></div>
+    <div id="doneList">${renderSimpleViolationList(done, {showStudent:false, showInfo:true})}</div>
+  `;
+}
+
+async function submitConfirm(id, requireStatement){
+  const chk = document.getElementById(`chk-${id}`);
+  const stmtEl = document.getElementById(`stmt-${id}`);
+  const stmt = stmtEl ? stmtEl.value.trim() : '';
+  const errEl = document.getElementById(`err-${id}`);
+  errEl.innerHTML = '';
+  if(!chk.checked){ errEl.innerHTML = `<div class="msg err">Vui lòng tích vào ô xác nhận trước khi gửi.</div>`; return; }
+  if(requireStatement && !stmt){ errEl.innerHTML = `<div class="msg err">Vui lòng viết bản tường trình trước khi gửi.</div>`; return; }
+  const btn = document.getElementById(`confirmBtn-${id}`);
+  btnLoading(btn, 'Đang gửi…');
+  try{
+    await db.collection('violations').doc(id).update({
+      confirmed:true, confirmedAt: firebase.firestore.FieldValue.serverTimestamp(), statement: stmt
+    });
+    renderStudentApp();
+  }catch(e){ errEl.innerHTML = `<div class="msg err">Lỗi: ${esc(e.message)}</div>`; btnReset(btn); }
+}
+
+/* ---------- Cờ đỏ: Vi phạm (danh sách đã gửi + popup ghi nhận vi phạm) ---------- */
+async function renderCdViolationsTab(body){
+  body.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px;">
+      <h2 style="margin:0;font-size:19px;color:var(--sky-deep);"><i class="fas fa-paper-plane" style="margin-right:8px;"></i>Vi phạm đã gửi</h2>
+      <button class="btn-fab" onclick="openCdViolationModal()" title="Ghi nhận vi phạm mới" aria-label="Ghi nhận vi phạm mới"><i class="fas fa-plus"></i></button>
+    </div>
+    <div id="cdReportsList">${loading()}</div>`;
+  await loadCdReportsList();
+}
+
+async function loadCdReportsList(){
+  const el = document.getElementById('cdReportsList');
+  if(!el) return;
+  const snap = await db.collection('violations').where('createdByUid','==', state.user.uid).orderBy('createdAt','desc').get();
+  const docs = snap.docs.map(d => ({id:d.id, ...d.data()}));
+  el.innerHTML = docs.length === 0 ? `<div class="empty">Em chưa gửi vi phạm nào.</div>` : renderSimpleViolationList(docs, {showStudent:true, showInfo:true});
+}
+
+function openCdViolationModal(){
+  const classIds = state.profile.classIds || [];
+  if(classIds.length === 0){
+    openModal(`<div class="empty">Em chưa được phân công giám sát lớp nào. Vui lòng liên hệ Quản trị viên.</div>
+      <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()"><i class="fas fa-xmark"></i>Đóng</button></div>`);
+    return;
+  }
+  openModal(`
+    <h3 style="margin-top:0;"><i class="fas fa-file-circle-plus" style="color:var(--sky);margin-right:6px;"></i>Ghi nhận vi phạm</h3>
+    <div id="cdMsg"></div>
+    <div class="field"><label>Lớp</label><select id="cdClass" onchange="loadCdStudents()">
+      ${classIds.map(id => `<option value="${id}">${esc(className(id))}</option>`).join('')}
+    </select></div>
+    <div class="field"><label>Học sinh</label><select id="cdStudent"><option>Đang tải…</option></select></div>
+    <div class="field"><label>Nội dung vi phạm</label><textarea id="cdContent" placeholder="Mô tả cụ thể hành vi vi phạm, thời gian, địa điểm…"></textarea></div>
+    <div class="field"><label>Điểm trừ đề xuất</label><input id="cdPoints" type="number" value="5" min="0"></div>
+    <div class="confirm-row" style="margin-bottom:14px;">
+      <input type="checkbox" id="cdRequireStatement" checked>
+      <div class="ctext">Yêu cầu học sinh viết bản tường trình khi xác nhận</div>
+    </div>
+    <div class="hint" style="margin-bottom:14px;">Vi phạm sẽ được gửi tới Admin/BCH Đoàn để duyệt trước khi chính thức ghi nhận.</div>
+    <div class="modal-actions" style="justify-content:space-between;">
+      <button class="btn btn-outline" onclick="closeModal()"><i class="fas fa-xmark"></i>Đóng</button>
+      <button class="btn btn-accent" id="cdSubmitBtn" onclick="submitCdViolation()"><i class="fas fa-paper-plane"></i>Gửi chờ duyệt</button>
+    </div>
+  `);
+  loadCdStudents();
+}
+
+async function loadCdStudents(){
+  const classId = document.getElementById('cdClass').value;
+  const sel = document.getElementById('cdStudent');
+  sel.innerHTML = `<option>Đang tải…</option>`;
+  const snap = await db.collection('users').where('classId','==', classId).get();
+  const docs = snap.docs.map(d => ({id:d.id, ...d.data()})).filter(d => !d.deleted).sort((a,b)=>(a.name||'').localeCompare(b.name||''));
+  if(docs.length === 0){ sel.innerHTML = `<option value="">Lớp chưa có học sinh</option>`; return; }
+  sel.innerHTML = docs.map(s => `<option value="${s.id}" data-name="${esc(s.name)}">${esc(s.name)}</option>`).join('');
+}
+
+async function submitCdViolation(){
+  const classId = document.getElementById('cdClass').value;
+  const sel = document.getElementById('cdStudent');
+  const content = document.getElementById('cdContent').value.trim();
+  const points = Number(document.getElementById('cdPoints').value) || 0;
+  const msg = document.getElementById('cdMsg');
+  msg.innerHTML = '';
+  if(!classId || !sel.value || !content){ msg.innerHTML = `<div class="msg err">Vui lòng chọn lớp, học sinh và nhập nội dung.</div>`; return; }
+  const opt = sel.options[sel.selectedIndex];
+  const requireStatement = document.getElementById('cdRequireStatement').checked;
+  const btn = document.getElementById('cdSubmitBtn');
+  btnLoading(btn, 'Đang gửi…');
+  try{
+    await db.collection('violations').add({
+      studentUid: sel.value, studentName: opt.dataset.name, classId, className: className(classId),
+      content, points, status:'pending_approval', requireStatement,
+      createdByUid: state.user.uid, createdByName: state.profile.name, createdByRole:'cd',
+      reviewedByUid:null, reviewedByName:null, reviewedAt:null, reviewNote:'',
+      confirmed:false, confirmedAt:null, statement:'',
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    msg.innerHTML = `<div class="msg ok">Đã gửi vi phạm của ${esc(opt.dataset.name)} chờ duyệt.</div>`;
+    document.getElementById('cdContent').value = '';
+    loadCdReportsList();
+  }catch(e){ msg.innerHTML = `<div class="msg err">Lỗi: ${esc(e.message)}</div>`; }
+  finally{ btnReset(btn); }
+}
+</script>
+</body>
+</html>
