@@ -531,7 +531,6 @@ function setTab(t){ state.tab = t; routeToApp(); }
 const ADMIN_TABS = [
   {key:'classes', label:'Lớp học'},
   {key:'managers', label:'Các quản lý'},
-  {key:'create', label:'Thêm vi phạm'},
   {key:'violations', label:'Vi phạm'},
 ];
 
@@ -545,7 +544,6 @@ async function renderAdmin(){
   
   if(state.tab === 'classes') return renderClassesTab(body);
   if(state.tab === 'managers') return renderManagersTab(body);
-  if(state.tab === 'create') return renderAdminCreateTab(body);
   if(state.tab === 'violations') return renderAdminViolationsTab(body);
 }
 
@@ -780,26 +778,20 @@ async function addAccount(){
 
 async function loadAccountList(){
   const el = document.getElementById('accountList');
-  const snap = await db.collection('users').where('role','in', ['manager','gvcn']).get();
+  // Chỉ lấy tài khoản có role là 'manager'
+  const snap = await db.collection('users').where('role','==','manager').get();
   let docs = snap.docs.map(d => ({id:d.id, ...d.data()})).filter(d => !d.deleted);
   docs.sort((a,b) => (a.name||'').localeCompare(b.name||''));
   if(docs.length === 0){ el.innerHTML = `<div class="empty">Không có tài khoản nào.</div>`; return; }
-  el.innerHTML = `<div class="table-wrap"><table><thead><tr><th>Họ tên</th><th>Vai trò</th><th>Lớp</th><th>Mã</th><th></th></tr></thead><tbody>
+  el.innerHTML = `<div class="table-wrap"><table><thead><tr><th>Họ tên</th><th>Mã</th><th></th></tr></thead><tbody>
     ${docs.map(u => `
       <tr>
         <td>${esc(u.name)}</td>
-        <td><span class="badge-role">${ROLE_LABEL[u.role]}</span></td>
-        <td>${u.classId ? esc(className(u.classId)) : '—'}</td>
         <td class="mono">${esc(codeFromEmail(u.email))}</td>
         <td style="text-align:right;white-space:nowrap;"><div class="row-actions">
-          ${u.role === 'manager' ? `
-            <button class="btn-icon accent" onclick="viewCredentials('${u.id}')" title="Quản lý mật khẩu"><i class="fas fa-key"></i></button>
-            <button class="btn-icon" onclick="editAccount('${u.id}')" title="Sửa tài khoản"><i class="fas fa-pen"></i></button>
-            <button class="btn-icon danger" onclick="deleteAccount('${u.id}')" title="Xóa tài khoản"><i class="fas fa-trash"></i></button>
-          ` : `
-            <button class="btn-icon accent" onclick="viewCredentials('${u.id}')" title="Quản lý mật khẩu"><i class="fas fa-key"></i></button>
-            <button class="btn-icon danger" onclick="deleteAccount('${u.id}')" title="Xóa tài khoản"><i class="fas fa-trash"></i></button>
-          `}
+          <button class="btn-icon accent" onclick="viewCredentials('${u.id}')" title="Quản lý mật khẩu"><i class="fas fa-key"></i></button>
+          <button class="btn-icon" onclick="editAccount('${u.id}')" title="Sửa tài khoản"><i class="fas fa-pen"></i></button>
+          <button class="btn-icon danger" onclick="deleteAccount('${u.id}')" title="Xóa tài khoản"><i class="fas fa-trash"></i></button>
         </div></td>
       </tr>`).join('')}
   </tbody></table></div>`;
@@ -888,31 +880,50 @@ async function doResetPassword(uid, email){
   finally{ btnReset(btn); }
 }
 
-/* ---------- Admin: Tạo vi phạm mới ---------- */
-function renderAdminCreateTab(body){
+/* ---------- Vi phạm (Admin: xem toàn bộ, có quyền xóa & tạo mới) ---------- */
+async function renderAdminViolationsTab(body){
   body.innerHTML = `
-    <div class="card">
-      <h3 style="margin-top:0;"><i class="fas fa-file-circle-plus" style="color:var(--sky);margin-right:6px;"></i>Lập phiếu vi phạm</h3>
-      <div id="cvMsg"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px;">
+      <h2 style="margin:0;font-size:19px;color:var(--sky-deep);"><i class="fas fa-triangle-exclamation" style="margin-right:8px;"></i>Danh sách vi phạm</h2>
+      <button class="btn-fab" onclick="openAdminViolationModal()" title="Thêm vi phạm mới" aria-label="Thêm vi phạm mới"><i class="fas fa-plus"></i></button>
+    </div>
+    <div class="card" style="margin-bottom:18px;">
       <div class="row">
-        <div class="field">
-          <label>Khối</label>
-          <select id="cvGrade" onchange="updateAdminClassOptions()">
-            <option value="">Chọn khối</option>
-            ${GRADES.map(g=>`<option value="${g}">Khối ${g}</option>`).join('')}
-          </select>
-        </div>
-        <div class="field">
-          <label>Lớp</label>
-          <select id="cvClass"><option value="">Chọn khối trước</option></select>
-        </div>
+        <div><label>Lớp</label><select id="logClass" onchange="loadAdminViolations()">
+          <option value="all">Tất cả</option>
+          ${[...state.classesCache].sort((a,b)=>(a.grade||'').localeCompare(b.grade||'')||(a.name||'').localeCompare(b.name||'')).map(c => `<option value="${c.id}">Khối ${esc(c.grade||'')} — ${esc(c.name)}</option>`).join('')}
+        </select></div>
       </div>
-      <div class="field"><label>Họ tên học sinh</label><input id="cvStudent" type="text" placeholder="Nguyễn Văn A"></div>
-      <div class="field"><label>Hình thức vi phạm</label><input id="cvType" type="text" placeholder="VD: Đi muộn, Không đồng phục..."></div>
-      <div class="field"><label>Nội dung vi phạm</label><textarea id="cvContent" placeholder="Mô tả chi tiết nội dung vi phạm..."></textarea></div>
-      <div class="field"><label>Bằng chứng</label><textarea id="cvEvidence" placeholder="Mô tả bằng chứng (tạm thời nhập text)..."></textarea></div>
+    </div>
+    <div id="logList">${loading()}</div>`;
+  loadAdminViolations();
+}
+
+function openAdminViolationModal(){
+  openModal(`
+    <h3 style="margin-top:0;"><i class="fas fa-file-circle-plus" style="color:var(--sky);margin-right:6px;"></i>Lập phiếu vi phạm</h3>
+    <div id="cvMsg"></div>
+    <div class="row">
+      <div class="field">
+        <label>Khối</label>
+        <select id="cvGrade" onchange="updateAdminClassOptions()">
+          <option value="">Chọn khối</option>
+          ${GRADES.map(g=>`<option value="${g}">Khối ${g}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field">
+        <label>Lớp</label>
+        <select id="cvClass"><option value="">Chọn khối trước</option></select>
+      </div>
+    </div>
+    <div class="field"><label>Họ tên học sinh</label><input id="cvStudent" type="text" placeholder="Nguyễn Văn A"></div>
+    <div class="field"><label>Hình thức vi phạm</label><input id="cvType" type="text" placeholder="VD: Đi muộn, Không đồng phục..."></div>
+    <div class="field"><label>Nội dung vi phạm</label><textarea id="cvContent" placeholder="Mô tả chi tiết nội dung vi phạm..."></textarea></div>
+    <div class="field"><label>Bằng chứng</label><textarea id="cvEvidence" placeholder="Mô tả bằng chứng (tạm thời nhập text)..."></textarea></div>
+    <div class="modal-actions" style="justify-content:space-between;">
+      <button class="btn btn-outline" onclick="closeModal()"><i class="fas fa-xmark"></i>Đóng</button>
       <button class="btn btn-accent" id="cvSubmitBtn" onclick="submitAdminViolation()"><i class="fas fa-check"></i>Tạo phiếu vi phạm</button>
-    </div>`;
+    </div>`);
 }
 
 function updateAdminClassOptions(){
@@ -947,28 +958,10 @@ async function submitAdminViolation(){
       createdByUid: state.user.uid, createdByName: state.profile.name,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
-    msg.innerHTML = `<div class="msg ok">Đã tạo phiếu vi phạm cho ${esc(studentName)}.</div>`;
-    document.getElementById('cvStudent').value = '';
-    document.getElementById('cvType').value = '';
-    document.getElementById('cvContent').value = '';
-    document.getElementById('cvEvidence').value = '';
+    closeModal();
+    loadAdminViolations(); // Tải lại danh sách vi phạm
   }catch(e){ msg.innerHTML = `<div class="msg err">Lỗi: ${esc(e.message)}</div>`; }
   finally{ btnReset(btn); }
-}
-
-/* ---------- Vi phạm (Admin: xem toàn bộ, có quyền xóa) ---------- */
-async function renderAdminViolationsTab(body){
-  body.innerHTML = `
-    <div class="card" style="margin-bottom:18px;">
-      <div class="row">
-        <div><label>Lớp</label><select id="logClass" onchange="loadAdminViolations()">
-          <option value="all">Tất cả</option>
-          ${[...state.classesCache].sort((a,b)=>(a.grade||'').localeCompare(b.grade||'')||(a.name||'').localeCompare(b.name||'')).map(c => `<option value="${c.id}">Khối ${esc(c.grade||'')} — ${esc(c.name)}</option>`).join('')}
-        </select></div>
-      </div>
-    </div>
-    <div id="logList">${loading()}</div>`;
-  loadAdminViolations();
 }
 
 async function loadAdminViolations(){
