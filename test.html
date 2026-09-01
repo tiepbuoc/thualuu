@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TL - Nề nếp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+  :root{
+    --sky:#1E88E5; --sky-dark:#0F6BC4; --sky-deep:#0B4C8C; --sky-light:#5FA8EB;
+    --sky-soft:#E9F3FD; --sky-soft-2:#D6EAFB;
+    --ink:#0E2A47; --ink-soft:#3E6690; --ink-faint:#8CA3BC;
+    --bg:#F4F9FE; --card:#FFFFFF;
+    --crimson:#D64550; --crimson-soft:#FCE8E9;
+    --forest:#22996B; --forest-soft:#E1F5EC;
+    --amber:#C4841E; --amber-soft:#FBF0DC;
+    --line:#DCEAF8; --radius:16px;
+    --shadow-sm:0 1px 2px rgba(14,42,71,0.06), 0 1px 1px rgba(14,42,71,0.04);
+    --shadow-md:0 8px 24px -8px rgba(14,74,140,0.18);
+    --shadow-lg:0 24px 56px -20px rgba(14,74,140,0.30);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{margin:0;background:var(--bg);
+    background-image:radial-gradient(circle at 10% 0%, var(--sky-soft) 0%, transparent 42%), radial-gradient(circle at 100% 0%, var(--sky-soft-2) 0%, transparent 38%);
+    background-attachment:fixed;color:var(--ink);font-family:'Inter',sans-serif;min-height:100vh;min-height:100dvh;-webkit-font-smoothing:antialiased;}
+  button,input,select,textarea{font-family:inherit;}
+  .fa-fw-icon{width:1em;text-align:center;}
+  h1,h2,h3,.display{font-family:'Lora',serif;letter-spacing:-0.01em;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  a{color:inherit;}
+  ::selection{background:var(--sky-soft-2);color:var(--sky-deep);}
+
+  #bootLoader{position:fixed;inset:0;background:linear-gradient(160deg,var(--sky-deep),var(--sky));display:flex;align-items:center;justify-content:center;z-index:999;transition:opacity .35s ease, visibility .35s ease;}
+  #bootLoader.hide{opacity:0;visibility:hidden;pointer-events:none;}
+  #bootLoader .boot-inner{display:flex;flex-direction:column;align-items:center;gap:16px;}
+  #bootLoader .boot-mark{width:56px;height:56px;border-radius:16px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-family:'Lora',serif;font-weight:700;color:#fff;font-size:22px;box-shadow:inset 0 0 0 2px rgba(255,255,255,0.35);}
+  #bootLoader .boot-text{color:#EAF3FD;font-size:13px;letter-spacing:.03em;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+  @keyframes shimmer{0%{background-position:-300px 0;}100%{background-position:300px 0;}}
+
+  .spinner{width:16px;height:16px;border-radius:50%;border:2.5px solid var(--sky-soft-2);border-top-color:var(--sky);animation:spin .7s linear infinite;flex-shrink:0;}
+  .loading-state{display:flex;align-items:center;justify-content:center;gap:10px;color:var(--ink-faint);font-size:13.5px;padding:36px 4px;animation:fadeIn .2s ease;}
+  .btn-spin{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,0.4);border-top-color:#fff;animation:spin .7s linear infinite;display:inline-block;vertical-align:-2px;margin-right:7px;}
+
+  .topbar{background:linear-gradient(120deg,var(--sky-deep),var(--sky-dark) 60%, var(--sky));color:#fff;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;box-shadow:var(--shadow-md);position:sticky;top:0;z-index:30;}
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand-mark{width:38px;height:38px;border-radius:11px;background:rgba(255,255,255,0.16);display:flex;align-items:center;justify-content:center;font-family:'Lora',serif;font-weight:700;color:#fff;font-size:15px;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,0.35);}
+  .brand-text .name{font-family:'Lora',serif;font-weight:600;font-size:18px;line-height:1.1;}
+  .brand-text .sub{font-size:11.5px;color:#CFE6FB;letter-spacing:.04em;text-transform:uppercase;}
+  .who{display:flex;align-items:center;gap:14px;font-size:14px;}
+  .who .tag{font-size:11px;text-transform:uppercase;letter-spacing:.05em;background:rgba(255,255,255,0.14);padding:3px 9px;border-radius:100px;color:#EAF3FD;display:inline-flex;align-items:center;gap:5px;}
+  .btn-ghost{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.3);color:#fff;width:38px;height:38px;padding:0;border-radius:10px;cursor:pointer;font-size:15px;display:inline-flex;align-items:center;justify-content:center;transition:background .15s ease,transform .1s ease;flex-shrink:0;}
+  .btn-ghost:hover{background:rgba(255,255,255,0.18);}
+  .btn-ghost:active{transform:scale(.92);}
+
+  .shell{max-width:1120px;margin:0 auto;padding:26px 24px 90px;}
+  .tabs{display:flex;gap:4px;margin-bottom:26px;border-bottom:1px solid var(--line);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  .tabs::-webkit-scrollbar{display:none;}
+  .tab{padding:11px 16px;font-size:14px;font-weight:600;cursor:pointer;color:var(--ink-faint);border-bottom:2.5px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:color .15s ease;display:inline-flex;align-items:center;gap:7px;}
+  .tab i{font-size:13px;opacity:.85;}
+  .tab:hover{color:var(--sky-dark);}
+  .tab.active{color:var(--sky-deep);border-bottom-color:var(--sky);}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;box-shadow:var(--shadow-sm);}
+
+  label{display:block;font-size:12.5px;font-weight:600;color:var(--ink-soft);margin-bottom:5px;text-transform:uppercase;letter-spacing:.03em;}
+  input[type=text],input[type=email],input[type=password],input[type=number],select,textarea{width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;font-size:15px;background:#FBFDFF;color:var(--ink);transition:border-color .15s ease, box-shadow .15s ease;}
+  textarea{resize:vertical;min-height:90px;}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--sky);box-shadow:0 0 0 3px var(--sky-soft-2);}
+  .field{margin-bottom:16px;}
+  .check-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;border:1.5px solid var(--line);border-radius:10px;padding:10px;background:#FBFDFF;max-height:170px;overflow:auto;}
+  .check-grid label{display:flex;align-items:center;gap:6px;font-size:13px;text-transform:none;font-weight:500;color:var(--ink);margin:0;}
+  .check-grid input{width:auto;}
+
+  .btn{background:var(--sky);color:#fff;border:none;padding:11px 18px;border-radius:10px;font-weight:600;font-size:14px;cursor:pointer;transition:background .15s ease, transform .1s ease, box-shadow .15s ease;display:inline-flex;align-items:center;justify-content:center;gap:7px;line-height:1.2;}
+  .btn:hover{background:var(--sky-dark);box-shadow:var(--shadow-sm);}
+  .btn:active{transform:translateY(1px) scale(.98);}
+  .btn:disabled{opacity:.55;cursor:not-allowed;transform:none;}
+  .btn-accent{background:var(--sky);color:#fff;box-shadow:0 4px 14px -6px rgba(30,136,229,.55);}
+  .btn-accent:hover{background:var(--sky-dark);}
+  .btn-outline{background:#fff;border:1.5px solid var(--sky-soft-2);color:var(--sky-deep);}
+  .btn-outline:hover{background:var(--sky-soft);border-color:var(--sky);}
+  .btn-danger{background:transparent;border:1.5px solid var(--crimson);color:var(--crimson);}
+  .btn-danger:hover{background:var(--crimson-soft);}
+  .btn-sm{padding:6px 11px;font-size:12.5px;border-radius:8px;}
+
+  .btn-icon{width:34px;height:34px;border-radius:9px;border:1.5px solid var(--line);background:#fff;color:var(--ink-soft);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:13.5px;transition:all .15s ease;flex-shrink:0;}
+  .btn-icon:hover{background:var(--sky-soft);border-color:var(--sky-soft-2);color:var(--sky-deep);}
+  .btn-icon:active{transform:scale(.92);}
+  .btn-icon.danger{color:var(--crimson);}
+  .btn-icon.danger:hover{background:var(--crimson-soft);border-color:var(--crimson);}
+  .btn-icon.forest{color:var(--forest);}
+  .btn-icon.forest:hover{background:var(--forest-soft);border-color:var(--forest);}
+  .btn-icon.accent{color:var(--sky-deep);}
+  .btn-icon.accent:hover{background:var(--sky-soft);border-color:var(--sky);}
+  .row-actions{display:inline-flex;gap:6px;align-items:center;justify-content:flex-end;}
+
+  .msg{font-size:13.5px;padding:10px 13px;border-radius:10px;margin-bottom:14px;display:flex;align-items:flex-start;gap:9px;line-height:1.5;animation:fadeIn .2s ease;}
+  .msg::before{font-family:"Font Awesome 6 Free";font-weight:900;font-size:14.5px;flex-shrink:0;margin-top:1px;}
+  .msg.err{background:var(--crimson-soft);color:var(--crimson);}
+  .msg.err::before{content:"\f06a";}
+  .msg.ok{background:var(--forest-soft);color:var(--forest);}
+  .msg.ok::before{content:"\f058";}
+  .msg.info{background:var(--sky-soft);color:var(--sky-deep);}
+  .msg.info::before{content:"\f05a";}
+
+  .table-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:12px;}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:480px;}
+  th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-faint);padding:9px 10px;border-bottom:1.5px solid var(--line);white-space:nowrap;}
+  td{padding:10px 10px;border-bottom:1px solid var(--line);vertical-align:middle;}
+  tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:var(--sky-soft);}
+  .pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:100px;font-size:11.5px;font-weight:600;white-space:nowrap;}
+  .pill.pending{background:var(--amber-soft);color:var(--amber);}
+  .pill.approved{background:var(--forest-soft);color:var(--forest);}
+  .pill.rejected{background:var(--crimson-soft);color:var(--crimson);}
+  .pill.confirmed{background:var(--sky-soft-2);color:var(--sky-deep);}
+
+  .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(150deg,var(--sky-deep) 0%,var(--sky-dark) 45%,var(--sky-light) 100%);}
+  .login-card{width:100%;max-width:420px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:34px 30px;box-shadow:var(--shadow-lg);animation:fadeIn .3s ease;}
+  .login-mark{width:52px;height:52px;border-radius:14px;background:var(--sky);display:flex;align-items:center;justify-content:center;font-family:'Lora',serif;font-weight:700;color:#fff;font-size:20px;margin-bottom:18px;box-shadow:0 8px 20px -6px rgba(30,136,229,0.55);}
+  .login-card h1{font-size:22px;margin:0 0 4px;color:var(--sky-deep);}
+  .login-card .lead{font-size:13.5px;color:var(--ink-faint);margin-bottom:22px;line-height:1.5;}
+
+  .login-tabs{display:flex;gap:4px;margin-bottom:22px;background:var(--sky-soft);padding:4px;border-radius:12px;}
+  .login-tab{flex:1;text-align:center;padding:9px 6px;border-radius:9px;font-size:13.5px;font-weight:700;cursor:pointer;color:var(--ink-soft);transition:all .15s ease;}
+  .login-tab.active{background:#fff;color:var(--sky-deep);box-shadow:var(--shadow-sm);}
+
+  .back-link{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink-faint);cursor:pointer;margin-bottom:14px;font-weight:600;}
+  .back-link:hover{color:var(--sky-dark);}
+
+  .grade-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:6px;}
+  .grade-block{background:var(--sky-soft);border:1.5px solid var(--sky-soft-2);border-radius:14px;padding:20px 8px;text-align:center;cursor:pointer;transition:all .15s ease;}
+  .grade-block:hover{background:var(--sky-soft-2);transform:translateY(-2px);}
+  .grade-block .g-num{font-family:'Lora',serif;font-size:26px;font-weight:700;color:var(--sky-deep);}
+  .grade-block .g-label{font-size:11px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.03em;margin-top:2px;}
+
+  .class-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:6px;max-height:320px;overflow:auto;padding:2px;}
+  .class-block{background:var(--sky-soft);border:1.5px solid var(--sky-soft-2);border-radius:12px;padding:14px 6px;text-align:center;cursor:pointer;transition:all .15s ease;font-weight:700;font-size:14px;color:var(--sky-deep);}
+  .class-block:hover{background:var(--sky-soft-2);transform:translateY(-2px);}
+  .selected-line{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border:1.5px solid var(--sky-soft-2);background:var(--sky-soft);border-radius:10px;font-weight:700;font-size:14.5px;color:var(--sky-deep);margin-bottom:16px;}
+  .selected-line .chg{font-size:12px;font-weight:600;color:var(--ink-faint);cursor:pointer;text-decoration:underline;}
+  .selected-line .chg:hover{color:var(--sky-dark);}
+
+  .type-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:6px;}
+  @media (max-width:520px){.type-grid{grid-template-columns:1fr;}}
+  .type-box{border:1.5px solid var(--line);border-radius:10px;padding:11px 13px;font-size:13.5px;font-weight:600;cursor:pointer;transition:all .15s ease;color:var(--ink-soft);background:#FBFDFF;}
+  .type-box:hover{border-color:var(--sky-soft-2);}
+  .type-box.selected{border-color:var(--sky);background:var(--sky-soft);color:var(--sky-deep);}
+
+  .slip{position:relative;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px 22px;margin-bottom:16px;overflow:hidden;box-shadow:var(--shadow-sm);}
+  .slip::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:var(--sky);}
+  .slip-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:10px;flex-wrap:wrap;}
+  .slip-head .who{color:var(--ink);font-weight:600;font-size:15px;}
+  .slip-content{font-size:14.5px;line-height:1.55;color:var(--ink-soft);margin-bottom:14px;white-space:pre-wrap;}
+  .slip-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px 20px;margin:12px 0 16px;padding:13px 15px;background:var(--sky-soft);border-radius:11px;}
+  .slip-meta .item{display:flex;flex-direction:column;gap:2px;min-width:0;}
+  .slip-meta .k{font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--sky-dark);font-weight:700;}
+  .slip-meta .v{font-size:13.5px;color:var(--ink);font-weight:600;word-break:break-word;}
+  .content-label{font-size:12.5px;font-weight:600;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.03em;margin-bottom:6px;display:block;}
+  .empty{color:var(--ink-faint);font-size:14px;padding:34px 4px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px;}
+  .empty::before{font-family:"Font Awesome 6 Free";font-weight:400;content:"\f10c";font-size:26px;color:var(--sky-light);opacity:.7;}
+
+  .section-title{display:flex;align-items:baseline;gap:10px;margin:28px 0 12px;}
+  .section-title h2{font-size:17px;margin:0;color:var(--sky-deep);}
+  .section-title .count{font-size:12px;color:var(--ink-faint);}
+  .hint{font-size:12.5px;color:var(--ink-faint);margin-top:6px;}
+  .divider{height:1px;background:var(--line);margin:20px 0;}
+  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:end;}
+  .row > div{flex:1;min-width:150px;}
+
+  .modal-bg{position:fixed;inset:0;background:rgba(11,55,92,0.5);display:flex;align-items:center;justify-content:center;padding:20px;z-index:50;animation:fadeIn .15s ease;backdrop-filter:blur(1px);}
+  .modal{background:var(--card);border-radius:18px;padding:26px 28px;max-width:520px;width:100%;max-height:88vh;overflow:auto;box-shadow:var(--shadow-lg);animation:fadeIn .2s ease;}
+  .modal.modal-wide{max-width:760px;}
+  .modal h3{margin-top:0;color:var(--sky-deep);}
+  .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;}
+
+  .badge-role{font-size:11px;padding:2px 8px;border-radius:100px;background:var(--sky-soft-2);color:var(--sky-deep);font-weight:600;}
+
+  .btn-fab{width:46px;height:46px;border-radius:50%;background:var(--sky);color:#fff;border:none;font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-md);transition:all .15s ease;flex-shrink:0;}
+  .btn-fab:hover{background:var(--sky-dark);transform:translateY(-1px);}
+  .btn-fab:active{transform:scale(.94);}
+
+  .simple-list{border:1px solid var(--line);border-radius:14px;background:var(--card);overflow:hidden;box-shadow:var(--shadow-sm);}
+  .simple-row{display:flex;gap:14px;padding:12px 18px;border-bottom:1px solid var(--line);align-items:center;}
+  .simple-row:last-child{border-bottom:none;}
+  .simple-row .day{width:110px;flex-shrink:0;font-size:12.5px;color:var(--ink-faint);}
+  .simple-row .day b{display:block;color:var(--ink);font-size:13.5px;}
+  .simple-row .body{flex:1;font-size:14px;min-width:0;}
+  .simple-row .body .nm{font-weight:600;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .simple-row .body .ct{color:var(--ink-soft);margin-top:2px;}
+  .simple-row .pts{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--crimson);white-space:nowrap;}
+  @media (max-width:600px){.simple-row{flex-wrap:wrap;}.simple-row .day{width:auto;}}
+
+  .info-btn{background:var(--sky-soft);border:1.5px solid transparent;color:var(--sky-deep);width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:12.5px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;transition:all .15s ease;}
+  .info-btn:hover{background:var(--sky-soft-2);border-color:var(--sky-soft-2);}
+  .info-btn:active{transform:scale(.9);}
+
+  @media (max-width:640px){
+    .topbar{padding:10px 14px;}
+    .brand-mark{width:34px;height:34px;font-size:13px;border-radius:9px;}
+    .brand-text{display:none;}
+    .shell{padding:16px 12px 90px;}
+    .card{padding:16px 14px;border-radius:13px;}
+    .login-card{padding:26px 20px;border-radius:16px;}
+    .who{gap:8px;font-size:12.5px;}
+    .who .tag{display:none;}
+    .modal{padding:18px 16px;border-radius:14px;}
+    .tab{padding:10px 12px;font-size:13px;}
+    .btn{padding:11px 16px;font-size:13.5px;}
+    .slip{padding:16px 16px 18px;}
+    .slip-meta{grid-template-columns:1fr 1fr;gap:8px 12px;padding:11px 12px;}
+    .modal-actions{flex-wrap:wrap;}
+    .modal-actions .btn{flex:1;min-width:110px;}
+  }
+  @media (hover:none){
+    input[type=text],input[type=email],input[type=password],input[type=number],select,textarea{font-size:16px;}
+    .btn,.btn-sm{min-height:38px;}
+  }
+</style>
+</head>
+<body>
+<div id="bootLoader">
+  <div class="boot-inner">
+    <div class="boot-mark">TL</div>
+    <div class="spinner" style="width:30px;height:30px;border-width:3px;border-color:rgba(255,255,255,.3);border-top-color:#fff;"></div>
+    <div class="boot-text"><i class="fas fa-circle-notch fa-spin" style="margin-right:6px;opacity:.8;"></i>Đang tải hệ thống…</div>
+  </div>
+</div>
+<div id="app"></div>
+<div id="modalRoot"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyA_ZRDZroWrQPuWtZ6eIj3QuPOOYeQ_SPU",
+  authDomain: "th-tl-8875a.firebaseapp.com",
+  projectId: "th-tl-8875a",
+  storageBucket: "th-tl-8875a.firebasestorage.app",
+  messagingSenderId: "285172440374",
+  appId: "1:285172440374:web:ecf176970edd67ecdaa797",
+  measurementId: "G-T6JGDD5GY4"
+};
+
+const app = firebase.initializeApp(firebaseConfig);
+const secondaryApp = firebase.initializeApp(firebaseConfig, "Secondary");
+const auth = app.auth();
+const secondaryAuth = secondaryApp.auth();
+const db = app.firestore();
+
+const EMAIL_DOMAIN = "tl-nenep.local";
+const ADMIN_EMAIL = "admin@admin.com";
+const root = document.getElementById('app');
+const modalRoot = document.getElementById('modalRoot');
+
+const ROLE_LABEL = { admin:'Quản trị viên', manager:'Quản lý', gvcn:'GVCN' };
+const GRADES = ['10','11','12'];
+const WEEKDAY_VN = ['Chủ Nhật','Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy'];
+const VIOLATION_TYPES = [
+  'Đi học muộn',
+  'Nghỉ học không phép',
+  'Không mặc đồng phục',
+  'Nói chuyện riêng trong giờ học',
+  'Không làm bài tập / học bài',
+  'Sử dụng điện thoại trong giờ học',
+  'Vi phạm tác phong, vệ sinh',
+  'Khác'
+];
+const OTHER_IDX = VIOLATION_TYPES.length - 1;
+
+let state = {
+  user:null, profile:null, tab:null, classesCache:[], violationCache:{},
+  loginTab:'gv', gvGrade:null, gvClassId:null,
+  createSelType:null
+};
+
+/* ============ HELPERS ============ */
+function esc(s){ return (s||'').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function fmtDate(ts){
+  if(!ts) return '—';
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  return d.toLocaleString('vi-VN', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+}
+function fmtDay(ts){
+  if(!ts) return {weekday:'—', date:'—'};
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  return { weekday: WEEKDAY_VN[d.getDay()], date: d.toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric'}) };
+}
+function codeFromEmail(email){ return (email||'').split('@')[0]; }
+function randomPw(){ return 'ns' + Math.random().toString(36).slice(2,8); }
+
+function openModal(html, opts){
+  const wide = (opts && opts.wide) ? ' modal-wide' : '';
+  modalRoot.innerHTML = `<div class="modal-bg" onclick="if(event.target===this) closeModal()"><div class="modal${wide}">${html}</div></div>`;
+}
+function closeModal(){ modalRoot.innerHTML = ''; }
+function loading(text){ return `<div class="loading-state"><span class="spinner"></span><span>${esc(text||'Đang tải…')}</span></div>`; }
+function btnLoading(el, text){
+  if(!el) return;
+  el.dataset.label = el.dataset.label || el.innerHTML;
+  el.disabled = true;
+  el.innerHTML = `<span class="btn-spin"></span>${esc(text||'Đang xử lý…')}`;
+}
+function btnReset(el){
+  if(!el) return;
+  el.disabled = false;
+  if(el.dataset.label) el.innerHTML = el.dataset.label;
+}
+function hideBootLoader(){ const b = document.getElementById('bootLoader'); if(b) b.classList.add('hide'); }
+
+async function loadClasses(force){
+  if(state.classesCache.length && !force) return state.classesCache;
+  const snap = await db.collection('classes').orderBy('name').get();
+  state.classesCache = snap.docs.map(d => ({id:d.id, ...d.data()}));
+  return state.classesCache;
+}
+function className(id){ const c = state.classesCache.find(c => c.id === id); return c ? c.name : '—'; }
+function classGrade(id){ const c = state.classesCache.find(c => c.id === id); return c ? c.grade : ''; }
+
+function violationLabel(v){
+  return v.violationType === 'Khác' && v.customType ? `Khác: ${v.customType}` : v.violationType;
+}
+
+/* ============ AUTH STATE ============ */
+loadClasses(true).catch(()=>{}); // load classes ngay cả khi chưa đăng nhập, phục vụ đăng nhập GV theo lớp
+
+auth.onAuthStateChanged(async (user) => {
+  state.user = user;
+  state.tab = null;
+  if(!user){ state.profile = null; renderLogin(); hideBootLoader(); return; }
+  const doc = await db.collection('users').doc(user.uid).get();
+  if(doc.exists){
+    const data = doc.data();
+    if(data.deleted){
+      await auth.signOut();
+      state.profile = null;
+      renderLogin();
+      const msg = document.getElementById('loginMsg');
+      if(msg) msg.innerHTML = `<div class="msg err">Tài khoản này đã bị Quản trị viên xóa khỏi hệ thống.</div>`;
+      hideBootLoader();
+      return;
+    }
+    state.profile = { uid: user.uid, ...data };
+    await loadClasses(true);
+    routeToApp();
+  } else {
+    renderOnboarding();
+  }
+  hideBootLoader();
+});
+
+function routeToApp(){
+  const p = state.profile;
+  if(p.role === 'admin') return renderAdmin();
+  if(p.role === 'manager') return renderManager();
+  if(p.role === 'gvcn') return renderGvcn();
+  renderLogin();
+}
+
+function logout(){ auth.signOut(); }
+
+/* ============ LOGIN ============ */
+function renderLogin(){
+  root.innerHTML = `
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="login-tabs">
+        <div class="login-tab ${state.loginTab==='gv'?'active':''}" onclick="switchLoginTab('gv')"><i class="fas fa-chalkboard-user" style="margin-right:6px;"></i>Giáo viên</div>
+        <div class="login-tab ${state.loginTab==='manage'?'active':''}" onclick="switchLoginTab('manage')"><i class="fas fa-user-shield" style="margin-right:6px;"></i>Quản lý</div>
+      </div>
+      <div id="loginMsg"></div>
+      <div id="loginBody"></div>
+    </div>
+  </div>`;
+  renderLoginBody();
+}
+
+function switchLoginTab(t){
+  state.loginTab = t; state.gvGrade = null; state.gvClassId = null;
+  document.getElementById('loginMsg').innerHTML = '';
+  renderLogin();
+}
+
+function renderLoginBody(){
+  const el = document.getElementById('loginBody');
+  if(state.loginTab === 'manage'){
+    el.innerHTML = `
+      <div class="field"><label><i class="fas fa-id-card fa-fw-icon" style="margin-right:4px;"></i>Mã đăng nhập</label><input id="loginId" type="text" placeholder="vd: admin, ql_01"></div>
+      <div class="field"><label><i class="fas fa-lock fa-fw-icon" style="margin-right:4px;"></i>Mật khẩu</label><input id="loginPw" type="password" placeholder="Mật khẩu"></div>
+      <button class="btn btn-accent" id="loginBtn" style="width:100%;padding:12px;" onclick="doManageLogin()"><i class="fas fa-arrow-right-to-bracket"></i>Đăng nhập</button>
+    `;
+    const pw = document.getElementById('loginPw');
+    if(pw) pw.addEventListener('keydown', e => { if(e.key === 'Enter') doManageLogin(); });
+    return;
+  }
+  // GV flow
+  if(!state.gvGrade){
+    el.innerHTML = `
+      <div class="hint" style="margin-bottom:12px;">Chọn khối lớp của bạn:</div>
+      <div class="grade-grid">
+        ${GRADES.map(g => `<div class="grade-block" onclick="pickGrade('${g}')"><div class="g-num">${g}</div><div class="g-label">Khối</div></div>`).join('')}
+      </div>`;
+    return;
+  }
+  let html = '';
+  if(state.gvClassId){
+    // Đã chọn lớp: ẩn phần chọn khối/lớp, chỉ hiện dòng tóm tắt + ô mật khẩu
+    html += `
+      <div class="selected-line"><span><i class="fas fa-school" style="margin-right:6px;"></i>Khối ${esc(state.gvGrade)} — ${esc(className(state.gvClassId))}</span><span class="chg" onclick="pickClass(null)">Đổi lớp</span></div>
+      <div class="field"><label><i class="fas fa-lock fa-fw-icon" style="margin-right:4px;"></i>Mật khẩu</label><input id="gvPw" type="password" placeholder="Mật khẩu"></div>
+      <button class="btn btn-accent" id="gvLoginBtn" style="width:100%;padding:12px;" onclick="doGvLogin()"><i class="fas fa-arrow-right-to-bracket"></i>Đăng nhập</button>`;
+    el.innerHTML = html;
+    const pw = document.getElementById('gvPw');
+    if(pw){ pw.focus(); pw.addEventListener('keydown', e => { if(e.key === 'Enter') doGvLogin(); }); }
+    return;
+  }
+  const classesInGrade = state.classesCache.filter(c => c.grade === state.gvGrade);
+  html += `<div class="back-link" onclick="backToGrade()"><i class="fas fa-arrow-left"></i>Chọn lại khối</div>
+    <div class="hint" style="margin-bottom:10px;">Khối ${esc(state.gvGrade)} — chọn lớp của bạn:</div>`;
+  if(classesInGrade.length === 0){
+    html += `<div class="empty">Khối này chưa có lớp nào.</div>`;
+  } else {
+    html += `<div class="class-grid">
+      ${classesInGrade.map(c => `<div class="class-block" onclick="pickClass('${c.id}')">${esc(c.name)}</div>`).join('')}
+    </div>`;
+  }
+  el.innerHTML = html;
+}
+
+function pickGrade(g){ state.gvGrade = g; state.gvClassId = null; renderLoginBody(); }
+function backToGrade(){ state.gvGrade = null; state.gvClassId = null; renderLoginBody(); }
+function pickClass(id){ state.gvClassId = id; renderLoginBody(); }
+
+async function doManageLogin(){
+  const idVal = document.getElementById('loginId').value.trim();
+  const pw = document.getElementById('loginPw').value;
+  const msg = document.getElementById('loginMsg');
+  const btn = document.getElementById('loginBtn');
+  msg.innerHTML = '';
+  if(!idVal || !pw){ msg.innerHTML = `<div class="msg err">Vui lòng nhập đầy đủ thông tin.</div>`; return; }
+  const email = idVal.includes('@') ? idVal : `${idVal}@${EMAIL_DOMAIN}`;
+  btnLoading(btn, 'Đang đăng nhập…');
+  try{ await auth.signInWithEmailAndPassword(email, pw); }
+  catch(e){ msg.innerHTML = `<div class="msg err">Đăng nhập thất bại: sai mã hoặc mật khẩu.</div>`; }
+  finally{ btnReset(btn); }
+}
+
+async function doGvLogin(){
+  const pw = document.getElementById('gvPw').value;
+  const msg = document.getElementById('loginMsg');
+  const btn = document.getElementById('gvLoginBtn');
+  msg.innerHTML = '';
+  if(!pw){ msg.innerHTML = `<div class="msg err">Vui lòng nhập mật khẩu.</div>`; return; }
+  btnLoading(btn, 'Đang đăng nhập…');
+  try{
+    const snap = await db.collection('users').where('classId','==', state.gvClassId).where('role','==','gvcn').limit(1).get();
+    const doc = snap.docs.find(d => !d.data().deleted);
+    if(!doc){ msg.innerHTML = `<div class="msg err">Lớp này chưa có tài khoản GVCN. Vui lòng liên hệ Quản trị viên.</div>`; return; }
+    await auth.signInWithEmailAndPassword(doc.data().email, pw);
+  }catch(e){ msg.innerHTML = `<div class="msg err">Sai mật khẩu, vui lòng thử lại.</div>`; }
+  finally{ btnReset(btn); }
+}
+
+/* ============ ONBOARDING (bootstrap admin only) ============ */
+function renderOnboarding(){
+  const isAdminEmail = state.user.email === ADMIN_EMAIL;
+  root.innerHTML = `
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="login-mark">TL</div>
+      <h1>Thiết lập tài khoản</h1>
+      <div class="lead">${isAdminEmail
+        ? 'Tài khoản này khớp với email quản trị hệ thống. Thiết lập hồ sơ Quản trị viên bên dưới.'
+        : 'Tài khoản của bạn chưa có hồ sơ. Vui lòng liên hệ Quản trị viên để được cấp tài khoản đúng vai trò.'}</div>
+      <div id="obMsg"></div>
+      ${isAdminEmail ? `
+        <div class="field"><label>Họ và tên</label><input id="obName" type="text" placeholder="Nguyễn Văn A"></div>
+        <button class="btn btn-accent" style="width:100%;padding:12px;margin-bottom:10px;" onclick="claimAdmin()"><i class="fas fa-user-shield"></i>Thiết lập là Quản trị viên</button>
+      ` : ''}
+      <button class="btn-ghost" style="width:100%;padding:10px;color:var(--ink);border-color:var(--line);" onclick="logout()"><i class="fas fa-arrow-right-from-bracket"></i>Đăng xuất</button>
+    </div>
+  </div>`;
+}
+
+async function claimAdmin(){
+  const name = document.getElementById('obName').value.trim();
+  const msg = document.getElementById('obMsg');
+  if(!name){ msg.innerHTML = `<div class="msg err">Vui lòng nhập họ tên.</div>`; return; }
+  try{
+    await db.collection('users').doc(state.user.uid).set({
+      role:'admin', name, email: state.user.email, classId:null,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    const doc = await db.collection('users').doc(state.user.uid).get();
+    state.profile = { uid: state.user.uid, ...doc.data() };
+    await loadClasses(true);
+    renderAdmin();
+  }catch(e){ msg.innerHTML = `<div class="msg err">Lỗi: ${esc(e.message)}</div>`; }
+}
+
+/* ============ TOPBAR ============ */
+function topbar(){
+  const p = state.profile;
+  return `
+  <div class="topbar">
+    <div class="brand"><div class="brand-mark">TL</div><div class="brand-text"><div class="name">Nề nếp</div><div class="sub">Sổ theo dõi điện tử</div></div></div>
+    <div class="who">
+      <div style="text-align:right;">
+        <div style="font-weight:600;">${esc(p.name)}${p.role==='gvcn' ? ' — '+esc(className(p.classId)) : ''}</div>
+        <span class="tag"><i class="fas fa-id-badge"></i>${esc(ROLE_LABEL[p.role]||p.role)}</span>
+      </div>
+      <button class="btn-ghost" onclick="logout()" title="Đăng xuất" aria-label="Đăng xuất"><i class="fas fa-arrow-right-from-bracket"></i></button>
+    </div>
+  </div>`;
+}
+
+const TAB_ICONS = { classes:'fa-school', managers:'fa-users', violations:'fa-triangle-exclamation', create:'fa-file-circle-plus', mine:'fa-list-check' };
+function tabsBar(tabs){
+  return `<div class="tabs">${tabs.map(t => `<div class="tab ${state.tab===t.key?'active':''}" onclick="setTab('${t.key}')">${TAB_ICONS[t.key]?`<i class="fas ${TAB_ICONS[t.key]}"></i>`:''}${esc(t.label)}</div>`).join('')}</div>`;
+}
+function setTab(t){ state.tab = t; routeToApp(); }
+
+/* ================================================================
+   ADMIN APP
+   ================================================================ */
+const ADMIN_TABS = [
+  {key:'classes', label:'Lớp học'},
+  {key:'managers', label:'Các quản lý'},
+  {key:'create', label:'Thêm vi phạm'},
+  {key:'violations', label:'Vi phạm'},
+];
+
+async function renderAdmin(){
+  if(!state.tab) state.tab = 'classes';
+  root.innerHTML = `${topbar()}<div class="shell">${tabsBar(ADMIN_TABS)}<div id="tabBody">${loading()}</div></div>`;
+  const body = document.getElementById('tabBody');
+  
+  // Tự động backfill GVCN cho các lớp chưa có
+  if(state.tab === 'classes') await syncExistingClassesGvcn();
+  
+  if(state.tab === 'classes') return renderClassesTab(body);
+  if(state.tab === 'managers') return renderManagersTab(body);
+  if(state.tab === 'create') return renderAdminCreateTab(body);
+  if(state.tab === 'violations') return renderAdminViolationsTab(body);
+}
+
+/* ---------- Auto Create GVCN ---------- */
+async function syncGvcnForClass(classId, className, classGrade) {
+  const code = 'gvcn_' + (className||'').toLowerCase().replace(/[^a-zA-Z0-9]/g,'') + '_' + (classGrade||'');
+  const email = `${code}@${EMAIL_DOMAIN}`;
+  const pw = randomPw();
+  try {
+    const cred = await secondaryAuth.createUserWithEmailAndPassword(email, pw);
+    await db.collection('users').doc(cred.user.uid).set({
+      role: 'gvcn', name: '', email, classId,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    await db.collection('credentials').doc(cred.user.uid).set({ password: pw, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+    await secondaryAuth.signOut();
+    return true;
+  } catch(e) {
+    console.error("Sync GVCN error:", e);
+    return false;
+  }
+}
+
+async function syncExistingClassesGvcn() {
+  for(const c of state.classesCache) {
+    const snap = await db.collection('users').where('classId','==', c.id).where('role','==','gvcn').get();
+    const active = snap.docs.find(d => !d.data().deleted);
+    if(!active) {
+      await syncGvcnForClass(c.id, c.name, c.grade);
+    }
+  }
+}
+
+/* ---------- Classes ---------- */
+async function renderClassesTab(body){
+  body.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px;">
+      <h2 style="margin:0;font-size:19px;color:var(--sky-deep);"><i class="fas fa-school" style="margin-right:8px;"></i>Danh sách lớp</h2>
+      <button class="btn-fab" onclick="openAddClassModal()" title="Thêm lớp mới" aria-label="Thêm lớp mới"><i class="fas fa-plus"></i></button>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden;"><div id="clsList">${loading()}</div></div>`;
+  renderClassList();
+}
+
+function openAddClassModal(){
+  openModal(`
+    <h3 style="margin-top:0;"><i class="fas fa-square-plus" style="color:var(--sky);margin-right:6px;"></i>Thêm lớp mới</h3>
+    <div id="clsMsg"></div>
+    <div class="field"><label>Khối</label><select id="clsGrade">${GRADES.map(g=>`<option value="${g}">Khối ${g}</option>`).join('')}</select></div>
+    <div class="field"><label>Tên lớp</label><input id="clsName" type="text" placeholder="vd: 10A1"></div>
+    <div class="hint">Tài khoản GVCN sẽ tự động được tạo kèm mật khẩu ngẫu nhiên.</div>
+    <div class="modal-actions" style="justify-content:space-between;">
+      <button class="btn btn-outline" onclick="closeModal()"><i class="fas fa-xmark"></i>Đóng</button>
+      <button class="btn btn-accent" id="addClassBtn" onclick="addClass()"><i class="fas fa-plus"></i>Tạo lớp</button>
+    </div>`);
+  document.getElementById('clsName').focus();
+}
+
+function renderClassList(){
+  const el = document.getElementById('clsList');
+  if(state.classesCache.length === 0){ el.innerHTML = `<div class="empty">Chưa có lớp nào.</div>`; return; }
+  const sorted = [...state.classesCache].sort((a,b)=> (a.grade||'').localeCompare(b.grade||'') || (a.name||'').localeCompare(b.name||''));
+  el.innerHTML = `<div class="simple-list" style="border:none;border-radius:0;box-shadow:none;">
+    ${sorted.map(c => `<div class="simple-row" style="padding:12px 16px;">
+      <div class="body" style="font-weight:600;font-size:14.5px;">${esc(c.name)} <span class="badge-role">Khối ${esc(c.grade||'—')}</span></div>
+      <div class="row-actions">
+        <button class="btn-icon accent" onclick="openClassInfo('${c.id}')" title="Thông tin & GVCN" aria-label="Thông tin lớp"><i class="fas fa-circle-info"></i></button>
+        <button class="btn-icon danger" onclick="deleteClass('${c.id}')" title="Xóa lớp" aria-label="Xóa lớp"><i class="fas fa-trash"></i></button>
+      </div>
+    </div>`).join('')}
+  </div>`;
+}
+
+async function addClass(){
+  const name = document.getElementById('clsName').value.trim();
+  const grade = document.getElementById('clsGrade').value;
+  const msg = document.getElementById('clsMsg');
+  const btn = document.getElementById('addClassBtn');
+  if(!name){ msg.innerHTML = `<div class="msg err">Vui lòng nhập tên lớp.</div>`; return; }
+  btnLoading(btn, 'Đang tạo…');
+  try{
+    const ref = await db.collection('classes').add({ name, grade, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+    await syncGvcnForClass(ref.id, name, grade); // Tự động tạo GVCN
+    msg.innerHTML = `<div class="msg ok">Đã tạo lớp ${esc(name)} và tài khoản GVCN tự động.</div>`;
+    document.getElementById('clsName').value = '';
+    await loadClasses(true);
+    renderClassList();
+  }catch(e){ msg.innerHTML = `<div class="msg err">Lỗi: ${esc(e.message)}</div>`; }
+  finally{ btnReset(btn); }
+}
+
+async function openClassInfo(id){
+  const c = state.classesCache.find(x=>x.id===id);
+  openModal(`<h3><i class="fas fa-circle-info" style="color:var(--sky);margin-right:6px;"></i>Thông tin lớp</h3><div id="clsInfoBody">${loading()}</div>`);
+  const body = document.getElementById('clsInfoBody');
+  try {
+    const snap = await db.collection('users').where('classId','==', id).where('role','==','gvcn').get();
+    const gvcnDoc = snap.docs.find(d => !d.data().deleted);
+    let gvcn = gvcnDoc ? {id: gvcnDoc.id, ...gvcnDoc.data()} : null;
+    let currentPw = '(chưa có)';
+    if(gvcn) {
+      const cred = await db.collection('credentials').doc(gvcn.id).get();
+      if(cred.exists && cred.data().password) currentPw = cred.data().password;
+    }
+    body.innerHTML = `
+      <div id="clsInfoMsg"></div>
+      <div class="field"><label>Tên lớp</label><input id="infoClsName" type="text" value="${esc(c.name)}"></div>
+      <div class="field"><label>Khối</label><select id="infoClsGrade">${GRADES.map(g=>`<option value="${g}" ${c.grade===g?'selected':''}>Khối ${g}</option>`).join('')}</select></div>
+      <div class="divider"></div>
+      <h4 style="margin:0 0 12px;color:var(--sky-deep);">Tài khoản GVCN</h4>
+      ${gvcn ? `
+        <div class="field"><label>Mã đăng nhập</label><div class="mono" style="background:var(--sky-soft);padding:9px 13px;border-radius:9px;display:inline-block;">${esc(codeFromEmail(gvcn.email))}</div></div>
+        <div class="field"><label>Mật khẩu hiện tại</label><div class="mono" style="background:var(--sky-soft);padding:9px 13px;border-radius:9px;display:inline-block;">${esc(currentPw)}</div></div>
+        <div class="field"><label>Đổi mật khẩu mới</label><input id="infoGvcnPw" type="text" placeholder="Để trống nếu không đổi"></div>
+      ` : `<div class="msg info">Lớp này chưa có GVCN. Vui lòng bấm "Đồng bộ GVCN" để tạo.</div>
+        <button class="btn btn-outline" onclick="syncGvcn('${c.id}')"><i class="fas fa-rotate"></i>Đồng bộ GVCN</button>`}
+      <div class="modal-actions" style="justify-content:space-between;margin-top:24px;">
+        <button class="btn btn-danger" onclick="deleteClass('${c.id}', true)"><i class="fas fa-trash"></i>Xóa lớp</button>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-outline" onclick="closeModal()"><i class="fas fa-xmark"></i>Đóng</button>
+          <button class="btn btn-accent" onclick="saveClassInfo('${c.id}', ${gvcn ? `'${gvcn.id}'` : 'null'}, ${gvcn ? `'${esc(gvcn.email)}'` : 'null'})"><i class="fas fa-check"></i>Lưu thay đổi</button>
+        </div>
+      </div>`;
+  } catch(e){ body.innerHTML = `<div class="msg err">Lỗi: ${esc(e.message)}</div>`; }
+}
+
+async function syncGvcn(classId){
+  const c = state.classesCache.find(x=>x.id===classId);
+  if(!c) return;
+  const ok = await syncGvcnForClass(c.id, c.name, c.grade);
+  if(ok) openClassInfo(classId);
+}
+
+async function saveClassInfo(classId, gvcnUid, gvcnEmail){
+  const name = document.getElementById('infoClsName').value.trim();
+  const grade = document.getElementById('infoClsGrade').value;
+  const newPw = document.getElementById('infoGvcnPw')?.value || '';
+  const msg = document.getElementById('clsInfoMsg');
+  
+  try {
+    await db.collection('classes').doc(classId).update({ name, grade });
+    if(gvcnUid && newPw && newPw.length >= 6) {
+      const credDoc = await db.collection('credentials').doc(gvcnUid).get();
+      const currentPw = credDoc.exists ? credDoc.data().password : null;
+      if(!currentPw) throw new Error('Không tìm thấy mật khẩu hiện tại.');
+      await secondaryAuth.signInWithEmailAndPassword(gvcnEmail, currentPw);
+      await secondaryAuth.currentUser.updatePassword(newPw);
+      await secondaryAuth.signOut();
+      await db.collection('credentials').doc(gvcnUid).set({ password: newPw, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+    }
+    msg.innerHTML = `<div class="msg ok">Đã lưu thay đổi.</div>`;
+    await loadClasses(true);
+    renderClassList();
+  } catch(e) {
+    msg.innerHTML = `<div class="msg err">Lỗi: ${esc(e.message)}</div>`;
+  }
+}
+
+async function deleteClass(id, fromModal){
+  if(!confirm(`Xóa lớp "${className(id)}"? Toàn bộ vi phạm của lớp và tài khoản GVCN gắn với lớp này sẽ bị xóa.`)) return;
+  const [violSnap, gvcnSnap] = await Promise.all([
+    db.collection('violations').where('classId','==', id).get(),
+    db.collection('users').where('classId','==', id).where('role','==','gvcn').get()
+  ]);
+  const batch = db.batch();
+  violSnap.forEach(d => batch.delete(d.ref));
+  gvcnSnap.forEach(d => batch.delete(d.ref));
+  batch.delete(db.collection('classes').doc(id));
+  await batch.commit();
+  await loadClasses(true);
+  if(fromModal) closeModal();
+  renderClassList();
+  if(!fromModal) routeToApp();
+}
+
+/* ---------- Managers (Accounts) ---------- */
+async function renderManagersTab(body){
+  body.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px;">
+      <h2 style="margin:0;font-size:19px;color:var(--sky-deep);"><i class="fas fa-users" style="margin-right:8px;"></i>Các quản lý</h2>
+      <button class="btn-fab" onclick="openCreateAccountModal()" title="Tạo tài khoản mới" aria-label="Tạo tài khoản mới"><i class="fas fa-plus"></i></button>
+    </div>
+    <div class="card">
+      <div id="accountList">${loading()}</div>
+    </div>`;
+  loadAccountList();
+}
+
+function openCreateAccountModal(){
+  openModal(`
+    <h3 style="margin-top:0;"><i class="fas fa-user-plus" style="color:var(--sky);margin-right:6px;"></i>Tạo tài khoản Quản lý</h3>
+    <div id="acMsg"></div>
+    <div class="field"><label>Họ và tên</label><input id="acName" type="text" placeholder="Nguyễn Văn A"></div>
+    <div class="field"><label>Mã đăng nhập</label><input id="acCode" type="text" placeholder="vd: ql_01"></div>
+    <div class="field"><label>Mật khẩu ban đầu</label><input id="acPw" type="text" value="${randomPw()}"></div>
+    <div class="modal-actions" style="justify-content:space-between;">
+      <button class="btn btn-outline" onclick="closeModal()"><i class="fas fa-xmark"></i>Đóng</button>
+      <button class="btn btn-accent" id="addAccountBtn" onclick="addAccount()"><i class="fas fa-plus"></i>Tạo tài khoản</button>
+    </div>`, {wide:false});
+}
+
+async function addAccount(){
+  const name = document.getElementById('acName').value.trim();
+  const code = document.getElementById('acCode').value.trim().toLowerCase().replace(/\s+/g,'');
+  const pw = document.getElementById('acPw').value;
+  const msg = document.getElementById('acMsg');
+  msg.innerHTML = '';
+  if(!name || !code || pw.length < 6){ msg.innerHTML = `<div class="msg err">Vui lòng nhập đủ họ tên, mã đăng nhập, mật khẩu tối thiểu 6 ký tự.</div>`; return; }
+  const email = `${code}@${EMAIL_DOMAIN}`;
+  const btn = document.getElementById('addAccountBtn');
+  btnLoading(btn, 'Đang tạo…');
+  try{
+    const cred = await secondaryAuth.createUserWithEmailAndPassword(email, pw);
+    await db.collection('users').doc(cred.user.uid).set({
+      role: 'manager', name, email, classId:null,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    await db.collection('credentials').doc(cred.user.uid).set({ password: pw, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+    await secondaryAuth.signOut();
+    msg.innerHTML = `<div class="msg ok">Đã tạo tài khoản ${esc(name)} (Quản lý). Mã đăng nhập: ${esc(code)}</div>`;
+    document.getElementById('acName').value = '';
+    document.getElementById('acCode').value = '';
+    document.getElementById('acPw').value = randomPw();
+    loadAccountList();
+  }catch(e){
+    let m = e.message;
+    if(e.code === 'auth/email-already-in-use') m = 'Mã đăng nhập đã tồn tại, vui lòng chọn mã khác.';
+    msg.innerHTML = `<div class="msg err">Lỗi: ${esc(m)}</div>`;
+  }
+  finally{ btnReset(btn); }
+}
+
+async function loadAccountList(){
+  const el = document.getElementById('accountList');
+  const snap = await db.collection('users').where('role','in', ['manager','gvcn']).get();
+  let docs = snap.docs.map(d => ({id:d.id, ...d.data()})).filter(d => !d.deleted);
+  docs.sort((a,b) => (a.name||'').localeCompare(b.name||''));
+  if(docs.length === 0){ el.innerHTML = `<div class="empty">Không có tài khoản nào.</div>`; return; }
+  el.innerHTML = `<div class="table-wrap"><table><thead><tr><th>Họ tên</th><th>Vai trò</th><th>Lớp</th><th>Mã</th><th></th></tr></thead><tbody>
+    ${docs.map(u => `
+      <tr>
+        <td>${esc(u.name)}</td>
+        <td><span class="badge-role">${ROLE_LABEL[u.role]}</span></td>
+        <td>${u.classId ? esc(className(u.classId)) : '—'}</td>
+        <td class="mono">${esc(codeFromEmail(u.email))}</td>
+        <td style="text-align:right;white-space:nowrap;"><div class="row-actions">
+          ${u.role === 'manager' ? `
+            <button class="btn-icon accent" onclick="viewCredentials('${u.id}')" title="Quản lý mật khẩu"><i class="fas fa-key"></i></button>
+            <button class="btn-icon" onclick="editAccount('${u.id}')" title="Sửa tài khoản"><i class="fas fa-pen"></i></button>
+            <button class="btn-icon danger" onclick="deleteAccount('${u.id}')" title="Xóa tài khoản"><i class="fas fa-trash"></i></button>
+          ` : `
+            <button class="btn-icon accent" onclick="viewCredentials('${u.id}')" title="Quản lý mật khẩu"><i class="fas fa-key"></i></button>
+            <button class="btn-icon danger" onclick="deleteAccount('${u.id}')" title="Xóa tài khoản"><i class="fas fa-trash"></i></button>
+          `}
+        </div></td>
+      </tr>`).join('')}
+  </tbody></table></div>`;
+}
+
+async function editAccount(uid){
+  const doc = await db.collection('users').doc(uid).get();
+  const u = doc.data();
+  openModal(`
+    <h3><i class="fas fa-user-pen" style="color:var(--sky);margin-right:6px;"></i>Sửa tài khoản</h3>
+    <div id="editMsg"></div>
+    <div class="field"><label>Họ và tên</label><input id="edName" type="text" value="${esc(u.name)}"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal()"><i class="fas fa-xmark"></i>Hủy</button>
+      <button class="btn btn-accent" onclick="saveAccountEdit('${uid}')"><i class="fas fa-check"></i>Lưu</button>
+    </div>`);
+}
+
+async function saveAccountEdit(uid){
+  const name = document.getElementById('edName').value.trim();
+  try{ await db.collection('users').doc(uid).update({ name }); closeModal(); loadAccountList(); }
+  catch(e){ document.getElementById('editMsg').innerHTML = `<div class="msg err">Lỗi: ${esc(e.message)}</div>`; }
+}
+
+async function deleteAccount(uid){
+  if(!confirm('Xóa vĩnh viễn tài khoản này khỏi hệ thống? Hành động không thể hoàn tác.')) return;
+  await db.collection('users').doc(uid).delete();
+  await db.collection('credentials').doc(uid).delete().catch(()=>{});
+  loadAccountList();
+}
+
+/* ---------- Xem / đặt lại mật khẩu (Admin) ---------- */
+async function viewCredentials(uid){
+  openModal(`<h3><i class="fas fa-key" style="color:var(--sky);margin-right:6px;"></i>Thông tin đăng nhập</h3><div id="credBody">${loading()}</div>`);
+  const credBody = document.getElementById('credBody');
+  try{
+    const uDoc = await db.collection('users').doc(uid).get();
+    if(!uDoc.exists){ credBody.innerHTML = `<div class="msg err">Không tìm thấy tài khoản.</div>`; return; }
+    const u = uDoc.data();
+    const code = codeFromEmail(u.email);
+    let pw;
+    const credDoc = await db.collection('credentials').doc(uid).get();
+    if(credDoc.exists && credDoc.data().password){ pw = credDoc.data().password; }
+    else{ pw = code; await db.collection('credentials').doc(uid).set({ password: pw, updatedAt: firebase.firestore.FieldValue.serverTimestamp(), migrated:true }); }
+    document.getElementById('credBody').innerHTML = `
+      <div class="field"><label>Họ và tên</label><div style="font-weight:600;">${esc(u.name)}</div></div>
+      <div class="field"><label>Mã đăng nhập</label><div class="mono">${esc(code)}</div></div>
+      <div class="field"><label>Mật khẩu hiện tại</label>
+        <div class="mono" style="font-size:16px;background:var(--sky-soft);color:var(--sky-deep);padding:9px 13px;border-radius:9px;display:inline-block;">${esc(pw)}</div></div>
+      <div class="divider"></div>
+      <label>Đặt mật khẩu mới</label>
+      <div style="display:flex;gap:8px;">
+        <input id="newPwInput" type="text" value="${randomPw()}">
+        <button type="button" class="btn-icon" style="width:44px;height:44px;flex-shrink:0;" title="Tạo mật khẩu ngẫu nhiên" onclick="document.getElementById('newPwInput').value=randomPw()"><i class="fas fa-dice"></i></button>
+      </div>
+      <div class="hint">Tối thiểu 6 ký tự.</div>
+      <div id="resetMsg" style="margin-top:10px;"></div>
+      <div class="modal-actions">
+        <button class="btn btn-outline" onclick="closeModal()"><i class="fas fa-xmark"></i>Đóng</button>
+        <button class="btn btn-accent" id="resetPwBtn" onclick="doResetPassword('${uid}','${esc(u.email)}')"><i class="fas fa-rotate"></i>Đặt lại mật khẩu</button>
+      </div>`;
+  }catch(e){ credBody.innerHTML = `<div class="msg err">Lỗi: ${esc(e.message)}</div>`; }
+}
+
+async function doResetPassword(uid, email){
+  const input = document.getElementById('newPwInput');
+  const newPw = input.value;
+  const msg = document.getElementById('resetMsg');
+  const btn = document.getElementById('resetPwBtn');
+  msg.innerHTML = '';
+  if(!newPw || newPw.length < 6){ msg.innerHTML = `<div class="msg err">Mật khẩu mới phải từ 6 ký tự trở lên.</div>`; return; }
+  btnLoading(btn, 'Đang đặt lại…');
+  try{
+    const credDoc = await db.collection('credentials').doc(uid).get();
+    const currentPw = credDoc.exists ? credDoc.data().password : null;
+    if(!currentPw) throw new Error('Không tìm thấy mật khẩu hiện tại được lưu trong hệ thống.');
+    await secondaryAuth.signInWithEmailAndPassword(email, currentPw);
+    await secondaryAuth.currentUser.updatePassword(newPw);
+    await secondaryAuth.signOut();
+    await db.collection('credentials').doc(uid).set({ password: newPw, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+    msg.innerHTML = `<div class="msg ok">Đã đặt lại mật khẩu thành công.</div>`;
+  }catch(e){
+    msg.innerHTML = `<div class="msg err">Lỗi: không thể tự động đặt lại mật khẩu. ${esc(e.message)}</div>`;
+    try{ await secondaryAuth.signOut(); }catch(_ignored){}
+  }
+  finally{ btnReset(btn); }
+}
+
+/* ---------- Admin: Tạo vi phạm mới ---------- */
+function renderAdminCreateTab(body){
+  body.innerHTML = `
+    <div class="card">
+      <h3 style="margin-top:0;"><i class="fas fa-file-circle-plus" style="color:var(--sky);margin-right:6px;"></i>Lập phiếu vi phạm</h3>
+      <div id="cvMsg"></div>
+      <div class="row">
+        <div class="field">
+          <label>Khối</label>
+          <select id="cvGrade" onchange="updateAdminClassOptions()">
+            <option value="">Chọn khối</option>
+            ${GRADES.map(g=>`<option value="${g}">Khối ${g}</option>`).join('')}
+          </select>
+        </div>
+        <div class="field">
+          <label>Lớp</label>
+          <select id="cvClass"><option value="">Chọn khối trước</option></select>
+        </div>
+      </div>
+      <div class="field"><label>Họ tên học sinh</label><input id="cvStudent" type="text" placeholder="Nguyễn Văn A"></div>
+      <div class="field"><label>Hình thức vi phạm</label><input id="cvType" type="text" placeholder="VD: Đi muộn, Không đồng phục..."></div>
+      <div class="field"><label>Nội dung vi phạm</label><textarea id="cvContent" placeholder="Mô tả chi tiết nội dung vi phạm..."></textarea></div>
+      <div class="field"><label>Bằng chứng</label><textarea id="cvEvidence" placeholder="Mô tả bằng chứng (tạm thời nhập text)..."></textarea></div>
+      <button class="btn btn-accent" id="cvSubmitBtn" onclick="submitAdminViolation()"><i class="fas fa-check"></i>Tạo phiếu vi phạm</button>
+    </div>`;
+}
+
+function updateAdminClassOptions(){
+  const g = document.getElementById('cvGrade').value;
+  const sel = document.getElementById('cvClass');
+  sel.innerHTML = '<option value="">Chọn lớp</option>';
+  if(!g) return;
+  state.classesCache.filter(c => c.grade === g).forEach(c => {
+    sel.innerHTML += `<option value="${c.id}">${esc(c.name)}</option>`;
+  });
+}
+
+async function submitAdminViolation(){
+  const classId = document.getElementById('cvClass').value;
+  const studentName = document.getElementById('cvStudent').value.trim();
+  const vType = document.getElementById('cvType').value.trim();
+  const content = document.getElementById('cvContent').value.trim();
+  const evidence = document.getElementById('cvEvidence').value.trim();
+  const msg = document.getElementById('cvMsg');
+  msg.innerHTML = '';
+  if(!classId || !studentName || !vType){ msg.innerHTML = `<div class="msg err">Vui lòng chọn lớp, nhập tên học sinh và loại vi phạm.</div>`; return; }
+  
+  const btn = document.getElementById('cvSubmitBtn');
+  btnLoading(btn, 'Đang tạo…');
+  try{
+    await db.collection('violations').add({
+      studentName, classId, className: className(classId),
+      violationType: vType, customType: '',
+      content, evidence,
+      points: 0,
+      statement: '',
+      createdByUid: state.user.uid, createdByName: state.profile.name,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    msg.innerHTML = `<div class="msg ok">Đã tạo phiếu vi phạm cho ${esc(studentName)}.</div>`;
+    document.getElementById('cvStudent').value = '';
+    document.getElementById('cvType').value = '';
+    document.getElementById('cvContent').value = '';
+    document.getElementById('cvEvidence').value = '';
+  }catch(e){ msg.innerHTML = `<div class="msg err">Lỗi: ${esc(e.message)}</div>`; }
+  finally{ btnReset(btn); }
+}
+
+/* ---------- Vi phạm (Admin: xem toàn bộ, có quyền xóa) ---------- */
+async function renderAdminViolationsTab(body){
+  body.innerHTML = `
+    <div class="card" style="margin-bottom:18px;">
+      <div class="row">
+        <div><label>Lớp</label><select id="logClass" onchange="loadAdminViolations()">
+          <option value="all">Tất cả</option>
+          ${[...state.classesCache].sort((a,b)=>(a.grade||'').localeCompare(b.grade||'')||(a.name||'').localeCompare(b.name||'')).map(c => `<option value="${c.id}">Khối ${esc(c.grade||'')} — ${esc(c.name)}</option>`).join('')}
+        </select></div>
+      </div>
+    </div>
+    <div id="logList">${loading()}</div>`;
+  loadAdminViolations();
+}
+
+async function loadAdminViolations(){
+  const classId = document.getElementById('logClass').value;
+  const el = document.getElementById('logList');
+  el.innerHTML = loading();
+  let snap = await db.collection('violations').orderBy('createdAt','desc').get();
+  let docs = snap.docs.map(d => ({id:d.id, ...d.data()}));
+  if(classId !== 'all') docs = docs.filter(d => d.classId === classId);
+  el.innerHTML = renderSimpleViolationList(docs, {showClass:true, allowDelete:true});
+}
+
+/* ---------- shared render helpers for violation lists / detail ---------- */
+function violationSlipHtml(v, opts){
+  opts = opts || {};
+  return `
+  <div class="slip">
+    <div class="slip-head">
+      <div><div class="who">${esc(v.studentName)}${v.className ? ' — '+esc(v.className) : ''}</div></div>
+      <div><span class="pill approved">${esc(violationLabel(v))}</span></div>
+    </div>
+    <div class="slip-meta">
+      <div class="item"><span class="k">Người lập phiếu</span><span class="v">${esc(v.createdByName||'—')}</span></div>
+      <div class="item"><span class="k">Thời gian</span><span class="v">${fmtDate(v.createdAt)}</span></div>
+      <div class="item"><span class="k">Điểm trừ</span><span class="v mono">${v.points||0}</span></div>
+    </div>
+    ${v.content ? `<label class="content-label">Nội dung vi phạm</label><div class="slip-content" style="background:var(--crimson-soft);padding:10px 12px;border-radius:8px;">${esc(v.content)}</div>` : ''}
+    ${v.evidence ? `<label class="content-label">Bằng chứng</label><div class="slip-content" style="background:var(--amber-soft);padding:10px 12px;border-radius:8px;">${esc(v.evidence)}</div>` : ''}
+    <label class="content-label">Bản tường trình</label>
+    <div class="slip-content" style="background:var(--sky-soft);padding:10px 12px;border-radius:8px;">${v.statement ? esc(v.statement) : '(chưa có tường trình)'}</div>
+    ${opts.editableStatement ? `
+      <div class="divider"></div>
+      <label class="content-label">Cập nhật tường trình</label>
+      <textarea id="stmtEdit-${v.id}" placeholder="Nhập nội dung bản tường trình…">${esc(v.statement||'')}</textarea>
+      <div class="hint">Tạm thời chỉ hỗ trợ nhập văn bản, đính kèm ảnh/tệp sẽ được bổ sung sau.</div>
+      <div id="stmtMsg-${v.id}" style="margin-top:8px;"></div>
+    ` : ''}
+  </div>`;
+}
+
+function renderSimpleViolationList(docs, opts){
+  opts = opts || {};
+  if(!docs || docs.length === 0) return `<div class="empty">Không có phiếu nào.</div>`;
+  docs.forEach(v => { state.violationCache[v.id] = v; });
+  return `<div class="simple-list">${docs.map(v => {
+    const {weekday, date} = fmtDay(v.createdAt);
+    return `<div class="simple-row">
+      <div class="day"><b>${weekday}</b>${date}</div>
+      <div class="body">
+        <div class="nm">${esc(v.studentName)}${opts.showClass && v.className ? ' — '+esc(v.className) : ''} <span class="pill approved">${esc(violationLabel(v))}</span></div>
+        <div class="ct">${v.statement ? '<i class="fas fa-file-lines" style="margin-right:4px;color:var(--ink-faint);"></i>Đã có tường trình' : 'Chưa có tường trình'}</div>
+      </div>
+      <div class="pts">-${v.points||0}</div>
+      <div class="row-actions">
+        <button class="info-btn" title="Chi tiết" aria-label="Chi tiết" onclick="showViolationDetail('${v.id}', ${!!opts.editableFor})">${'<i class="fas fa-circle-info"></i>'}</button>
+        ${opts.allowDelete ? `<button class="btn-icon danger" title="Xóa" aria-label="Xóa" onclick="deleteViolation('${v.id}')"><i class="fas fa-trash"></i></button>` : ''}
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function showViolationDetail(id, editable){
+  const v = state.violationCache[id];
+  if(!v) return;
+  openModal(`${violationSlipHtml(v, {editableStatement:editable})}
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal()"><i class="fas fa-xmark"></i>Đóng</button>
+      ${editable ? `<button class="btn btn-accent" onclick="saveStatement('${v.id}')"><i class="fas fa-floppy-disk"></i>Lưu tường trình</button>` : ''}
+    </div>`);
+}
+
+async function saveStatement(id){
+  const ta = document.getElementById(`stmtEdit-${id}`);
+  const msgEl = document.getElementById(`stmtMsg-${id}`);
+  const val = ta.value.trim();
+  try{
+    await db.collection('violations').doc(id).update({ statement: val });
+    if(state.violationCache[id]) state.violationCache[id].statement = val;
+    if(msgEl) msgEl.innerHTML = `<div class="msg ok">Đã lưu bản tường trình.</div>`;
+  }catch(e){ if(msgEl) msgEl.innerHTML = `<div class="msg err">Lỗi: ${esc(e.message)}</div>`; }
+}
+
+async function deleteViolation(id){
+  if(!confirm('Xóa phiếu vi phạm này? Không thể hoàn tác.')) return;
+  await db.collection('violations').doc(id).delete();
+  closeModal();
+  routeToApp();
+}
+
+/* ================================================================
+   MANAGER APP (Quản lý)
+   ================================================================ */
+const MANAGER_TABS = [
+  {key:'create', label:'Tạo vi phạm'},
+  {key:'mine', label:'Vi phạm đã tạo'},
+];
+
+async function renderManager(){
+  if(!state.tab) state.tab = 'create';
+  root.innerHTML = `${topbar()}<div class="shell">${tabsBar(MANAGER_TABS)}<div id="tabBody">${loading()}</div></div>`;
+  const body = document.getElementById('tabBody');
+  if(state.tab === 'create') return renderCreateViolationTab(body);
+  if(state.tab === 'mine') return renderMyCreatedTab(body);
+}
+
+function renderCreateViolationTab(body){
+  state.createSelType = null;
+  const sortedClasses = [...state.classesCache].sort((a,b)=>(a.grade||'').localeCompare(b.grade||'')||(a.name||'').localeCompare(b.name||''));
+  body.innerHTML = `
+    <div class="card">
+      <h3 style="margin-top:0;"><i class="fas fa-file-circle-plus" style="color:var(--sky);margin-right:6px;"></i>Lập phiếu vi phạm mới</h3>
+      <div id="cvMsg"></div>
+      <div class="row">
+        <div class="field"><label>Lớp</label><select id="cvClass">
+          ${sortedClasses.map(c => `<option value="${c.id}">Khối ${esc(c.grade||'')} — ${esc(c.name)}</option>`).join('') || '<option value="">(chưa có lớp)</option>'}
+        </select></div>
+        <div class="field"><label>Họ tên học sinh</label><input id="cvStudent" type="text" placeholder="Nguyễn Văn A"></div>
+      </div>
+      <div class="field">
+        <label>Loại vi phạm</label>
+        <div class="type-grid" id="cvTypeGrid">
+          ${VIOLATION_TYPES.map((t,i) => `<div class="type-box" data-idx="${i}" onclick="selectViolationType(${i})">${esc(t)}</div>`).join('')}
+        </div>
+        <textarea id="cvOtherText" style="display:none;margin-top:8px;" placeholder="Nhập tên vi phạm khác…"></textarea>
+      </div>
+      <div class="field" style="max-width:180px;"><label>Điểm trừ</label><input id="cvPoints" type="number" value="5" min="0"></div>
+      <button class="btn btn-accent" id="cvSubmitBtn" onclick="submitCreateViolation()"><i class="fas fa-check"></i>Tạo phiếu vi phạm</button>
+      <div class="hint">Sau khi tạo, nội dung vi phạm không thể chỉnh sửa. Bạn có thể bổ sung bản tường trình sau ở tab "Vi phạm đã tạo".</div>
+    </div>`;
+}
+
+function selectViolationType(idx){
+  state.createSelType = idx;
+  document.querySelectorAll('#cvTypeGrid .type-box').forEach(el => el.classList.toggle('selected', Number(el.dataset.idx) === idx));
+  document.getElementById('cvOtherText').style.display = idx === OTHER_IDX ? 'block' : 'none';
+}
+
+async function submitCreateViolation(){
+  const classId = document.getElementById('cvClass').value;
+  const studentName = document.getElementById('cvStudent').value.trim();
+  const points = Number(document.getElementById('cvPoints').value) || 0;
+  const msg = document.getElementById('cvMsg');
+  msg.innerHTML = '';
+  if(!classId){ msg.innerHTML = `<div class="msg err">Vui lòng chọn lớp.</div>`; return; }
+  if(!studentName){ msg.innerHTML = `<div class="msg err">Vui lòng nhập họ tên học sinh.</div>`; return; }
+  if(state.createSelType === null){ msg.innerHTML = `<div class="msg err">Vui lòng chọn loại vi phạm.</div>`; return; }
+  let customType = '';
+  if(state.createSelType === OTHER_IDX){
+    customType = document.getElementById('cvOtherText').value.trim();
+    if(!customType){ msg.innerHTML = `<div class="msg err">Vui lòng nhập tên vi phạm khác.</div>`; return; }
+  }
+  const btn = document.getElementById('cvSubmitBtn');
+  btnLoading(btn, 'Đang tạo…');
+  try{
+    await db.collection('violations').add({
+      studentName, classId, className: className(classId),
+      violationType: VIOLATION_TYPES[state.createSelType], customType,
+      points, statement:'',
+      createdByUid: state.user.uid, createdByName: state.profile.name,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    msg.innerHTML = `<div class="msg ok">Đã tạo phiếu vi phạm cho ${esc(studentName)}.</div>`;
+    document.getElementById('cvStudent').value = '';
+    document.getElementById('cvOtherText').value = '';
+    state.createSelType = null;
+    document.querySelectorAll('#cvTypeGrid .type-box').forEach(el => el.classList.remove('selected'));
+    document.getElementById('cvOtherText').style.display = 'none';
+  }catch(e){ msg.innerHTML = `<div class="msg err">Lỗi: ${esc(e.message)}</div>`; }
+  finally{ btnReset(btn); }
+}
+
+async function renderMyCreatedTab(body){
+  body.innerHTML = `<h2 style="margin-top:0;font-size:19px;color:var(--sky-deep);"><i class="fas fa-list-check" style="margin-right:8px;"></i>Vi phạm đã tạo</h2><div id="mineList">${loading()}</div>`;
+  const snap = await db.collection('violations').where('createdByUid','==', state.user.uid).orderBy('createdAt','desc').get();
+  const docs = snap.docs.map(d => ({id:d.id, ...d.data()}));
+  document.getElementById('mineList').innerHTML = docs.length === 0
+    ? `<div class="empty">Bạn chưa tạo phiếu vi phạm nào.</div>`
+    : renderSimpleViolationList(docs, {showClass:true, editableFor:true});
+}
+
+/* ================================================================
+   GVCN APP (chỉ xem)
+   ================================================================ */
+async function renderGvcn(){
+  state.tab = 'violations';
+  root.innerHTML = `${topbar()}<div class="shell"><div id="tabBody">${loading()}</div></div>`;
+  const body = document.getElementById('tabBody');
+  const classId = state.profile.classId;
+  if(!classId){ body.innerHTML = `<div class="empty">Tài khoản của bạn chưa được gán lớp chủ nhiệm. Vui lòng liên hệ Quản trị viên.</div>`; return; }
+  body.innerHTML = `<h2 style="margin-top:0;font-size:19px;color:var(--sky-deep);"><i class="fas fa-triangle-exclamation" style="margin-right:8px;"></i>Vi phạm của lớp ${esc(className(classId))}</h2><div id="gvList">${loading()}</div>`;
+  const snap = await db.collection('violations').where('classId','==', classId).orderBy('createdAt','desc').get();
+  const docs = snap.docs.map(d => ({id:d.id, ...d.data()}));
+  document.getElementById('gvList').innerHTML = docs.length === 0
+    ? `<div class="empty">Lớp chưa có vi phạm nào được ghi nhận.</div>`
+    : renderSimpleViolationList(docs, {showClass:false, editableFor:false});
+}
+</script>
+</body>
+</html>
