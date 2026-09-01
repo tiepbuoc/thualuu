@@ -138,12 +138,12 @@
   .grade-block .g-num{font-family:'Lora',serif;font-size:26px;font-weight:700;color:var(--sky-deep);}
   .grade-block .g-label{font-size:11px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.03em;margin-top:2px;}
 
-  .class-pick-list{display:flex;flex-direction:column;gap:8px;margin-bottom:6px;max-height:280px;overflow:auto;}
-  .class-pick-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;border:1.5px solid var(--line);border-radius:10px;cursor:pointer;transition:all .15s ease;font-weight:600;font-size:14.5px;}
-  .class-pick-row:hover{border-color:var(--sky-soft-2);background:var(--sky-soft);}
-  .class-pick-row.selected{border-color:var(--sky);background:var(--sky-soft);color:var(--sky-deep);}
-  .class-pick-row i{color:var(--sky-light);}
-  .class-pick-row.selected i{color:var(--sky);}
+  .class-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:6px;max-height:320px;overflow:auto;padding:2px;}
+  .class-block{background:var(--sky-soft);border:1.5px solid var(--sky-soft-2);border-radius:12px;padding:14px 6px;text-align:center;cursor:pointer;transition:all .15s ease;font-weight:700;font-size:14px;color:var(--sky-deep);}
+  .class-block:hover{background:var(--sky-soft-2);transform:translateY(-2px);}
+  .selected-line{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border:1.5px solid var(--sky-soft-2);background:var(--sky-soft);border-radius:10px;font-weight:700;font-size:14.5px;color:var(--sky-deep);margin-bottom:16px;}
+  .selected-line .chg{font-size:12px;font-weight:600;color:var(--ink-faint);cursor:pointer;text-decoration:underline;}
+  .selected-line .chg:hover{color:var(--sky-dark);}
 
   .type-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:6px;}
   @media (max-width:520px){.type-grid{grid-template-columns:1fr;}}
@@ -369,9 +369,6 @@ function renderLogin(){
   root.innerHTML = `
   <div class="login-wrap">
     <div class="login-card">
-      <div class="login-mark">TL</div>
-      <h1>TL &middot; Nề nếp</h1>
-      <div class="lead">Sổ theo dõi nề nếp điện tử.</div>
       <div class="login-tabs">
         <div class="login-tab ${state.loginTab==='gv'?'active':''}" onclick="switchLoginTab('gv')"><i class="fas fa-chalkboard-user" style="margin-right:6px;"></i>Giáo viên</div>
         <div class="login-tab ${state.loginTab==='manage'?'active':''}" onclick="switchLoginTab('manage')"><i class="fas fa-user-shield" style="margin-right:6px;"></i>Quản lý</div>
@@ -410,24 +407,29 @@ function renderLoginBody(){
       </div>`;
     return;
   }
+  let html = '';
+  if(state.gvClassId){
+    // Đã chọn lớp: ẩn phần chọn khối/lớp, chỉ hiện dòng tóm tắt + ô mật khẩu
+    html += `
+      <div class="selected-line"><span><i class="fas fa-school" style="margin-right:6px;"></i>Khối ${esc(state.gvGrade)} — ${esc(className(state.gvClassId))}</span><span class="chg" onclick="pickClass(null)">Đổi lớp</span></div>
+      <div class="field"><label><i class="fas fa-lock fa-fw-icon" style="margin-right:4px;"></i>Mật khẩu</label><input id="gvPw" type="password" placeholder="Mật khẩu"></div>
+      <button class="btn btn-accent" id="gvLoginBtn" style="width:100%;padding:12px;" onclick="doGvLogin()"><i class="fas fa-arrow-right-to-bracket"></i>Đăng nhập</button>`;
+    el.innerHTML = html;
+    const pw = document.getElementById('gvPw');
+    if(pw){ pw.focus(); pw.addEventListener('keydown', e => { if(e.key === 'Enter') doGvLogin(); }); }
+    return;
+  }
   const classesInGrade = state.classesCache.filter(c => c.grade === state.gvGrade);
-  let html = `<div class="back-link" onclick="backToGrade()"><i class="fas fa-arrow-left"></i>Chọn lại khối</div>
+  html += `<div class="back-link" onclick="backToGrade()"><i class="fas fa-arrow-left"></i>Chọn lại khối</div>
     <div class="hint" style="margin-bottom:10px;">Khối ${esc(state.gvGrade)} — chọn lớp của bạn:</div>`;
   if(classesInGrade.length === 0){
     html += `<div class="empty">Khối này chưa có lớp nào.</div>`;
   } else {
-    html += `<div class="class-pick-list">
-      ${classesInGrade.map(c => `<div class="class-pick-row ${state.gvClassId===c.id?'selected':''}" onclick="pickClass('${c.id}')">${esc(c.name)}<i class="fas ${state.gvClassId===c.id?'fa-circle-check':'fa-chevron-right'}"></i></div>`).join('')}
+    html += `<div class="class-grid">
+      ${classesInGrade.map(c => `<div class="class-block" onclick="pickClass('${c.id}')">${esc(c.name)}</div>`).join('')}
     </div>`;
   }
-  if(state.gvClassId){
-    html += `
-      <div class="field" style="margin-top:14px;"><label><i class="fas fa-lock fa-fw-icon" style="margin-right:4px;"></i>Mật khẩu</label><input id="gvPw" type="password" placeholder="Mật khẩu"></div>
-      <button class="btn btn-accent" id="gvLoginBtn" style="width:100%;padding:12px;" onclick="doGvLogin()"><i class="fas fa-arrow-right-to-bracket"></i>Đăng nhập</button>`;
-  }
   el.innerHTML = html;
-  const pw = document.getElementById('gvPw');
-  if(pw){ pw.focus(); pw.addEventListener('keydown', e => { if(e.key === 'Enter') doGvLogin(); }); }
 }
 
 function pickGrade(g){ state.gvGrade = g; state.gvClassId = null; renderLoginBody(); }
@@ -517,7 +519,7 @@ function topbar(){
   </div>`;
 }
 
-const TAB_ICONS = { classes:'fa-school', accounts:'fa-users', violations:'fa-triangle-exclamation', create:'fa-file-circle-plus', mine:'fa-list-check' };
+const TAB_ICONS = { classes:'fa-school', managers:'fa-users', violations:'fa-triangle-exclamation', create:'fa-file-circle-plus', mine:'fa-list-check' };
 function tabsBar(tabs){
   return `<div class="tabs">${tabs.map(t => `<div class="tab ${state.tab===t.key?'active':''}" onclick="setTab('${t.key}')">${TAB_ICONS[t.key]?`<i class="fas ${TAB_ICONS[t.key]}"></i>`:''}${esc(t.label)}</div>`).join('')}</div>`;
 }
@@ -528,7 +530,7 @@ function setTab(t){ state.tab = t; routeToApp(); }
    ================================================================ */
 const ADMIN_TABS = [
   {key:'classes', label:'Lớp học'},
-  {key:'accounts', label:'Tài khoản'},
+  {key:'managers', label:'Các quản lý'},
   {key:'violations', label:'Vi phạm'},
 ];
 
@@ -536,9 +538,43 @@ async function renderAdmin(){
   if(!state.tab) state.tab = 'classes';
   root.innerHTML = `${topbar()}<div class="shell">${tabsBar(ADMIN_TABS)}<div id="tabBody">${loading()}</div></div>`;
   const body = document.getElementById('tabBody');
+  
+  // Tự động backfill GVCN cho các lớp chưa có
+  if(state.tab === 'classes') await syncExistingClassesGvcn();
+  
   if(state.tab === 'classes') return renderClassesTab(body);
-  if(state.tab === 'accounts') return renderAccountsTab(body);
+  if(state.tab === 'managers') return renderManagersTab(body);
   if(state.tab === 'violations') return renderAdminViolationsTab(body);
+}
+
+/* ---------- Auto Create GVCN ---------- */
+async function syncGvcnForClass(classId, className, classGrade) {
+  const code = 'gvcn_' + (className||'').toLowerCase().replace(/[^a-zA-Z0-9]/g,'') + '_' + (classGrade||'');
+  const email = `${code}@${EMAIL_DOMAIN}`;
+  const pw = randomPw();
+  try {
+    const cred = await secondaryAuth.createUserWithEmailAndPassword(email, pw);
+    await db.collection('users').doc(cred.user.uid).set({
+      role: 'gvcn', name: '', email, classId,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    await db.collection('credentials').doc(cred.user.uid).set({ password: pw, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+    await secondaryAuth.signOut();
+    return true;
+  } catch(e) {
+    console.error("Sync GVCN error:", e);
+    return false;
+  }
+}
+
+async function syncExistingClassesGvcn() {
+  for(const c of state.classesCache) {
+    const snap = await db.collection('users').where('classId','==', c.id).where('role','==','gvcn').get();
+    const active = snap.docs.find(d => !d.data().deleted);
+    if(!active) {
+      await syncGvcnForClass(c.id, c.name, c.grade);
+    }
+  }
 }
 
 /* ---------- Classes ---------- */
@@ -558,6 +594,7 @@ function openAddClassModal(){
     <div id="clsMsg"></div>
     <div class="field"><label>Khối</label><select id="clsGrade">${GRADES.map(g=>`<option value="${g}">Khối ${g}</option>`).join('')}</select></div>
     <div class="field"><label>Tên lớp</label><input id="clsName" type="text" placeholder="vd: 10A1"></div>
+    <div class="hint">Tài khoản GVCN sẽ tự động được tạo kèm mật khẩu ngẫu nhiên.</div>
     <div class="modal-actions" style="justify-content:space-between;">
       <button class="btn btn-outline" onclick="closeModal()"><i class="fas fa-xmark"></i>Đóng</button>
       <button class="btn btn-accent" id="addClassBtn" onclick="addClass()"><i class="fas fa-plus"></i>Tạo lớp</button>
@@ -573,7 +610,7 @@ function renderClassList(){
     ${sorted.map(c => `<div class="simple-row" style="padding:12px 16px;">
       <div class="body" style="font-weight:600;font-size:14.5px;">${esc(c.name)} <span class="badge-role">Khối ${esc(c.grade||'—')}</span></div>
       <div class="row-actions">
-        <button class="btn-icon" onclick="renameClass('${c.id}')" title="Sửa lớp" aria-label="Sửa lớp"><i class="fas fa-pen"></i></button>
+        <button class="btn-icon accent" onclick="openClassInfo('${c.id}')" title="Thông tin & GVCN" aria-label="Thông tin lớp"><i class="fas fa-circle-info"></i></button>
         <button class="btn-icon danger" onclick="deleteClass('${c.id}')" title="Xóa lớp" aria-label="Xóa lớp"><i class="fas fa-trash"></i></button>
       </div>
     </div>`).join('')}
@@ -588,8 +625,9 @@ async function addClass(){
   if(!name){ msg.innerHTML = `<div class="msg err">Vui lòng nhập tên lớp.</div>`; return; }
   btnLoading(btn, 'Đang tạo…');
   try{
-    await db.collection('classes').add({ name, grade, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-    msg.innerHTML = `<div class="msg ok">Đã tạo lớp ${esc(name)}.</div>`;
+    const ref = await db.collection('classes').add({ name, grade, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+    await syncGvcnForClass(ref.id, name, grade); // Tự động tạo GVCN
+    msg.innerHTML = `<div class="msg ok">Đã tạo lớp ${esc(name)} và tài khoản GVCN tự động.</div>`;
     document.getElementById('clsName').value = '';
     await loadClasses(true);
     renderClassList();
@@ -597,18 +635,74 @@ async function addClass(){
   finally{ btnReset(btn); }
 }
 
-async function renameClass(id){
+async function openClassInfo(id){
   const c = state.classesCache.find(x=>x.id===id);
-  const name = prompt('Tên lớp mới:', c.name);
-  if(!name || !name.trim()) return;
-  const grade = prompt('Khối (10/11/12):', c.grade || '10');
-  if(!GRADES.includes(grade)) { alert('Khối không hợp lệ, chỉ chấp nhận 10, 11 hoặc 12.'); return; }
-  await db.collection('classes').doc(id).update({ name: name.trim(), grade });
-  await loadClasses(true);
-  renderClassList();
+  openModal(`<h3><i class="fas fa-circle-info" style="color:var(--sky);margin-right:6px;"></i>Thông tin lớp</h3><div id="clsInfoBody">${loading()}</div>`);
+  const body = document.getElementById('clsInfoBody');
+  try {
+    const snap = await db.collection('users').where('classId','==', id).where('role','==','gvcn').get();
+    const gvcnDoc = snap.docs.find(d => !d.data().deleted);
+    let gvcn = gvcnDoc ? {id: gvcnDoc.id, ...gvcnDoc.data()} : null;
+    let currentPw = '(chưa có)';
+    if(gvcn) {
+      const cred = await db.collection('credentials').doc(gvcn.id).get();
+      if(cred.exists && cred.data().password) currentPw = cred.data().password;
+    }
+    body.innerHTML = `
+      <div id="clsInfoMsg"></div>
+      <div class="field"><label>Tên lớp</label><input id="infoClsName" type="text" value="${esc(c.name)}"></div>
+      <div class="field"><label>Khối</label><select id="infoClsGrade">${GRADES.map(g=>`<option value="${g}" ${c.grade===g?'selected':''}>Khối ${g}</option>`).join('')}</select></div>
+      <div class="divider"></div>
+      <h4 style="margin:0 0 12px;color:var(--sky-deep);">Tài khoản GVCN</h4>
+      ${gvcn ? `
+        <div class="field"><label>Mã đăng nhập</label><div class="mono" style="background:var(--sky-soft);padding:9px 13px;border-radius:9px;display:inline-block;">${esc(codeFromEmail(gvcn.email))}</div></div>
+        <div class="field"><label>Mật khẩu hiện tại</label><div class="mono" style="background:var(--sky-soft);padding:9px 13px;border-radius:9px;display:inline-block;">${esc(currentPw)}</div></div>
+        <div class="field"><label>Đổi mật khẩu mới</label><input id="infoGvcnPw" type="text" placeholder="Để trống nếu không đổi"></div>
+      ` : `<div class="msg info">Lớp này chưa có GVCN. Vui lòng bấm "Đồng bộ GVCN" để tạo.</div>
+        <button class="btn btn-outline" onclick="syncGvcn('${c.id}')"><i class="fas fa-rotate"></i>Đồng bộ GVCN</button>`}
+      <div class="modal-actions" style="justify-content:space-between;margin-top:24px;">
+        <button class="btn btn-danger" onclick="deleteClass('${c.id}', true)"><i class="fas fa-trash"></i>Xóa lớp</button>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-outline" onclick="closeModal()"><i class="fas fa-xmark"></i>Đóng</button>
+          <button class="btn btn-accent" onclick="saveClassInfo('${c.id}', ${gvcn ? `'${gvcn.id}'` : 'null'}, ${gvcn ? `'${esc(gvcn.email)}'` : 'null'})"><i class="fas fa-check"></i>Lưu thay đổi</button>
+        </div>
+      </div>`;
+  } catch(e){ body.innerHTML = `<div class="msg err">Lỗi: ${esc(e.message)}</div>`; }
 }
 
-async function deleteClass(id){
+async function syncGvcn(classId){
+  const c = state.classesCache.find(x=>x.id===classId);
+  if(!c) return;
+  const ok = await syncGvcnForClass(c.id, c.name, c.grade);
+  if(ok) openClassInfo(classId);
+}
+
+async function saveClassInfo(classId, gvcnUid, gvcnEmail){
+  const name = document.getElementById('infoClsName').value.trim();
+  const grade = document.getElementById('infoClsGrade').value;
+  const newPw = document.getElementById('infoGvcnPw')?.value || '';
+  const msg = document.getElementById('clsInfoMsg');
+  
+  try {
+    await db.collection('classes').doc(classId).update({ name, grade });
+    if(gvcnUid && newPw && newPw.length >= 6) {
+      const credDoc = await db.collection('credentials').doc(gvcnUid).get();
+      const currentPw = credDoc.exists ? credDoc.data().password : null;
+      if(!currentPw) throw new Error('Không tìm thấy mật khẩu hiện tại.');
+      await secondaryAuth.signInWithEmailAndPassword(gvcnEmail, currentPw);
+      await secondaryAuth.currentUser.updatePassword(newPw);
+      await secondaryAuth.signOut();
+      await db.collection('credentials').doc(gvcnUid).set({ password: newPw, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+    }
+    msg.innerHTML = `<div class="msg ok">Đã lưu thay đổi.</div>`;
+    await loadClasses(true);
+    renderClassList();
+  } catch(e) {
+    msg.innerHTML = `<div class="msg err">Lỗi: ${esc(e.message)}</div>`;
+  }
+}
+
+async function deleteClass(id, fromModal){
   if(!confirm(`Xóa lớp "${className(id)}"? Toàn bộ vi phạm của lớp và tài khoản GVCN gắn với lớp này sẽ bị xóa.`)) return;
   const [violSnap, gvcnSnap] = await Promise.all([
     db.collection('violations').where('classId','==', id).get(),
@@ -616,32 +710,23 @@ async function deleteClass(id){
   ]);
   const batch = db.batch();
   violSnap.forEach(d => batch.delete(d.ref));
-  gvcnSnap.forEach(d => batch.update(d.ref, { deleted:true, deletedAt: firebase.firestore.FieldValue.serverTimestamp() }));
+  gvcnSnap.forEach(d => batch.delete(d.ref));
   batch.delete(db.collection('classes').doc(id));
   await batch.commit();
   await loadClasses(true);
+  if(fromModal) closeModal();
   renderClassList();
+  if(!fromModal) routeToApp();
 }
 
-/* ---------- Accounts ---------- */
-async function renderAccountsTab(body){
+/* ---------- Managers (Accounts) ---------- */
+async function renderManagersTab(body){
   body.innerHTML = `
     <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px;">
-      <h2 style="margin:0;font-size:19px;color:var(--sky-deep);"><i class="fas fa-users" style="margin-right:8px;"></i>Danh sách tài khoản</h2>
+      <h2 style="margin:0;font-size:19px;color:var(--sky-deep);"><i class="fas fa-users" style="margin-right:8px;"></i>Các quản lý</h2>
       <button class="btn-fab" onclick="openCreateAccountModal()" title="Tạo tài khoản mới" aria-label="Tạo tài khoản mới"><i class="fas fa-plus"></i></button>
     </div>
     <div class="card">
-      <div class="row" style="margin-bottom:12px;">
-        <div><label>Lọc theo vai trò</label>
-          <select id="acFilterRole" onchange="loadAccountList()">
-            <option value="all">Tất cả (đang hoạt động)</option>
-            <option value="admin">Quản trị viên</option>
-            <option value="manager">Quản lý</option>
-            <option value="gvcn">GVCN</option>
-            <option value="deleted">Đã xóa (lưu trữ)</option>
-          </select>
-        </div>
-      </div>
       <div id="accountList">${loading()}</div>
     </div>`;
   loadAccountList();
@@ -649,70 +734,36 @@ async function renderAccountsTab(body){
 
 function openCreateAccountModal(){
   openModal(`
-    <h3 style="margin-top:0;"><i class="fas fa-user-plus" style="color:var(--sky);margin-right:6px;"></i>Tạo tài khoản mới</h3>
+    <h3 style="margin-top:0;"><i class="fas fa-user-plus" style="color:var(--sky);margin-right:6px;"></i>Tạo tài khoản Quản lý</h3>
     <div id="acMsg"></div>
-    <div class="field">
-      <label>Vai trò</label>
-      <select id="acType" onchange="onAcTypeChange()">
-        <option value="manager">Quản lý</option>
-        <option value="gvcn">GVCN</option>
-        <option value="admin">Quản trị viên</option>
-      </select>
-    </div>
     <div class="field"><label>Họ và tên</label><input id="acName" type="text" placeholder="Nguyễn Văn A"></div>
-    <div id="acClassWrap" class="field" style="display:none;">
-      <label>Lớp chủ nhiệm</label>
-      <select id="acClass"></select>
-      <div class="hint">Mỗi lớp chỉ có một tài khoản GVCN.</div>
-    </div>
-    <div class="field"><label>Mã đăng nhập</label><input id="acCode" type="text" placeholder="vd: gvcn_10a1"></div>
+    <div class="field"><label>Mã đăng nhập</label><input id="acCode" type="text" placeholder="vd: ql_01"></div>
     <div class="field"><label>Mật khẩu ban đầu</label><input id="acPw" type="text" value="${randomPw()}"></div>
     <div class="modal-actions" style="justify-content:space-between;">
       <button class="btn btn-outline" onclick="closeModal()"><i class="fas fa-xmark"></i>Đóng</button>
       <button class="btn btn-accent" id="addAccountBtn" onclick="addAccount()"><i class="fas fa-plus"></i>Tạo tài khoản</button>
     </div>`, {wide:false});
-  onAcTypeChange();
-}
-
-function onAcTypeChange(){
-  const type = document.getElementById('acType').value;
-  const wrap = document.getElementById('acClassWrap');
-  wrap.style.display = type === 'gvcn' ? 'block' : 'none';
-  if(type === 'gvcn'){
-    const assigned = new Set(); // classes already having an active gvcn are still listed but flagged; validated on submit
-    const sel = document.getElementById('acClass');
-    const sorted = [...state.classesCache].sort((a,b)=> (a.grade||'').localeCompare(b.grade||'') || (a.name||'').localeCompare(b.name||''));
-    sel.innerHTML = sorted.map(c => `<option value="${c.id}">Khối ${esc(c.grade||'')} — ${esc(c.name)}</option>`).join('') || `<option value="">(chưa có lớp)</option>`;
-  }
 }
 
 async function addAccount(){
-  const type = document.getElementById('acType').value;
   const name = document.getElementById('acName').value.trim();
   const code = document.getElementById('acCode').value.trim().toLowerCase().replace(/\s+/g,'');
   const pw = document.getElementById('acPw').value;
   const msg = document.getElementById('acMsg');
   msg.innerHTML = '';
   if(!name || !code || pw.length < 6){ msg.innerHTML = `<div class="msg err">Vui lòng nhập đủ họ tên, mã đăng nhập, mật khẩu tối thiểu 6 ký tự.</div>`; return; }
-  let classId = null;
-  if(type === 'gvcn'){
-    classId = document.getElementById('acClass').value;
-    if(!classId){ msg.innerHTML = `<div class="msg err">Vui lòng chọn lớp chủ nhiệm.</div>`; return; }
-    const existing = await db.collection('users').where('classId','==', classId).where('role','==','gvcn').get();
-    if(existing.docs.some(d => !d.data().deleted)){ msg.innerHTML = `<div class="msg err">Lớp này đã có tài khoản GVCN. Vui lòng xóa tài khoản cũ trước.</div>`; return; }
-  }
   const email = `${code}@${EMAIL_DOMAIN}`;
   const btn = document.getElementById('addAccountBtn');
   btnLoading(btn, 'Đang tạo…');
   try{
     const cred = await secondaryAuth.createUserWithEmailAndPassword(email, pw);
     await db.collection('users').doc(cred.user.uid).set({
-      role: type, name, email, classId,
+      role: 'manager', name, email, classId:null,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
     await db.collection('credentials').doc(cred.user.uid).set({ password: pw, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
     await secondaryAuth.signOut();
-    msg.innerHTML = `<div class="msg ok">Đã tạo tài khoản ${esc(name)} (${ROLE_LABEL[type]}). Mã đăng nhập: ${esc(code)}</div>`;
+    msg.innerHTML = `<div class="msg ok">Đã tạo tài khoản ${esc(name)} (Quản lý). Mã đăng nhập: ${esc(code)}</div>`;
     document.getElementById('acName').value = '';
     document.getElementById('acCode').value = '';
     document.getElementById('acPw').value = randomPw();
@@ -727,76 +778,52 @@ async function addAccount(){
 
 async function loadAccountList(){
   const el = document.getElementById('accountList');
-  const filter = document.getElementById('acFilterRole') ? document.getElementById('acFilterRole').value : 'all';
-  const snap = await db.collection('users').where('role','in', ['admin','manager','gvcn']).get();
-  let docs = snap.docs.map(d => ({id:d.id, ...d.data()}));
-  if(filter === 'deleted'){ docs = docs.filter(d => d.deleted); }
-  else{ docs = docs.filter(d => !d.deleted); if(filter !== 'all') docs = docs.filter(d => d.role === filter); }
+  // Chỉ lấy tài khoản có role là 'manager'
+  const snap = await db.collection('users').where('role','==','manager').get();
+  let docs = snap.docs.map(d => ({id:d.id, ...d.data()})).filter(d => !d.deleted);
   docs.sort((a,b) => (a.name||'').localeCompare(b.name||''));
-  if(docs.length === 0){ el.innerHTML = `<div class="empty">${filter==='deleted'?'Chưa có tài khoản nào bị xóa.':'Không có tài khoản nào.'}</div>`; return; }
-  el.innerHTML = `<div class="table-wrap"><table><thead><tr><th>Họ tên</th><th>Vai trò</th><th>Lớp</th><th>Mã</th><th></th></tr></thead><tbody>
-    ${docs.map(u => {
-      const isDeleted = !!u.deleted;
-      return `<tr${isDeleted?' style="opacity:.55;"':''}>
-        <td>${esc(u.name)}${isDeleted?' <span class="pill rejected">Đã xóa</span>':''}</td>
-        <td><span class="badge-role">${ROLE_LABEL[u.role]}</span></td>
-        <td>${u.classId ? esc(className(u.classId)) : '—'}</td>
+  if(docs.length === 0){ el.innerHTML = `<div class="empty">Không có tài khoản nào.</div>`; return; }
+  el.innerHTML = `<div class="table-wrap"><table><thead><tr><th>Họ tên</th><th>Mã</th><th></th></tr></thead><tbody>
+    ${docs.map(u => `
+      <tr>
+        <td>${esc(u.name)}</td>
         <td class="mono">${esc(codeFromEmail(u.email))}</td>
         <td style="text-align:right;white-space:nowrap;"><div class="row-actions">
-          ${isDeleted
-            ? `<button class="btn-icon forest" onclick="restoreAccount('${u.id}')" title="Khôi phục" aria-label="Khôi phục"><i class="fas fa-rotate-left"></i></button>`
-            : `<button class="btn-icon accent" onclick="viewCredentials('${u.id}')" title="Quản lý mật khẩu" aria-label="Quản lý mật khẩu"><i class="fas fa-key"></i></button>
-               <button class="btn-icon" onclick="editAccount('${u.id}')" title="Sửa tài khoản" aria-label="Sửa tài khoản"><i class="fas fa-pen"></i></button>
-               <button class="btn-icon danger" onclick="deleteAccount('${u.id}')" title="Xóa tài khoản" aria-label="Xóa tài khoản"><i class="fas fa-trash"></i></button>`}
+          <button class="btn-icon accent" onclick="viewCredentials('${u.id}')" title="Quản lý mật khẩu"><i class="fas fa-key"></i></button>
+          <button class="btn-icon" onclick="editAccount('${u.id}')" title="Sửa tài khoản"><i class="fas fa-pen"></i></button>
+          <button class="btn-icon danger" onclick="deleteAccount('${u.id}')" title="Xóa tài khoản"><i class="fas fa-trash"></i></button>
         </div></td>
-      </tr>`;
-    }).join('')}
+      </tr>`).join('')}
   </tbody></table></div>`;
 }
 
 async function editAccount(uid){
   const doc = await db.collection('users').doc(uid).get();
   const u = doc.data();
-  const needClass = u.role === 'gvcn';
   openModal(`
     <h3><i class="fas fa-user-pen" style="color:var(--sky);margin-right:6px;"></i>Sửa tài khoản</h3>
     <div id="editMsg"></div>
     <div class="field"><label>Họ và tên</label><input id="edName" type="text" value="${esc(u.name)}"></div>
-    ${needClass ? `<div class="field"><label>Lớp chủ nhiệm</label><select id="edClass">
-      ${state.classesCache.map(c => `<option value="${c.id}" ${c.id===u.classId?'selected':''}>Khối ${esc(c.grade||'')} — ${esc(c.name)}</option>`).join('')}
-    </select></div>` : ''}
     <div class="modal-actions">
       <button class="btn btn-outline" onclick="closeModal()"><i class="fas fa-xmark"></i>Hủy</button>
-      <button class="btn btn-accent" onclick="saveAccountEdit('${uid}', ${needClass})"><i class="fas fa-check"></i>Lưu</button>
+      <button class="btn btn-accent" onclick="saveAccountEdit('${uid}')"><i class="fas fa-check"></i>Lưu</button>
     </div>`);
 }
 
-async function saveAccountEdit(uid, needClass){
+async function saveAccountEdit(uid){
   const name = document.getElementById('edName').value.trim();
-  const update = { name };
-  if(needClass){
-    const newClassId = document.getElementById('edClass').value;
-    const dupe = await db.collection('users').where('classId','==', newClassId).where('role','==','gvcn').get();
-    if(dupe.docs.some(d => d.id !== uid && !d.data().deleted)){
-      document.getElementById('editMsg').innerHTML = `<div class="msg err">Lớp này đã có GVCN khác phụ trách.</div>`; return;
-    }
-    update.classId = newClassId;
-  }
-  try{ await db.collection('users').doc(uid).update(update); closeModal(); loadAccountList(); }
+  try{ await db.collection('users').doc(uid).update({ name }); closeModal(); loadAccountList(); }
   catch(e){ document.getElementById('editMsg').innerHTML = `<div class="msg err">Lỗi: ${esc(e.message)}</div>`; }
 }
 
 async function deleteAccount(uid){
-  if(!confirm('Xóa tài khoản này khỏi hệ thống? Tài khoản sẽ ngừng hoạt động ngay lập tức. Bạn có thể "Khôi phục" bất cứ lúc nào nếu xóa nhầm.')) return;
-  await db.collection('users').doc(uid).update({ deleted:true, deletedAt: firebase.firestore.FieldValue.serverTimestamp() });
-  loadAccountList();
-}
-async function restoreAccount(uid){
-  await db.collection('users').doc(uid).update({ deleted:false, deletedAt:null });
+  if(!confirm('Xóa vĩnh viễn tài khoản này khỏi hệ thống? Hành động không thể hoàn tác.')) return;
+  await db.collection('users').doc(uid).delete();
+  await db.collection('credentials').doc(uid).delete().catch(()=>{});
   loadAccountList();
 }
 
-/* ---------- Xem / đặt lại mật khẩu (chỉ Admin) ---------- */
+/* ---------- Xem / đặt lại mật khẩu (Admin) ---------- */
 async function viewCredentials(uid){
   openModal(`<h3><i class="fas fa-key" style="color:var(--sky);margin-right:6px;"></i>Thông tin đăng nhập</h3><div id="credBody">${loading()}</div>`);
   const credBody = document.getElementById('credBody');
@@ -853,9 +880,13 @@ async function doResetPassword(uid, email){
   finally{ btnReset(btn); }
 }
 
-/* ---------- Vi phạm (Admin: xem toàn bộ, có quyền xóa) ---------- */
+/* ---------- Vi phạm (Admin: xem toàn bộ, có quyền xóa & tạo mới) ---------- */
 async function renderAdminViolationsTab(body){
   body.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px;">
+      <h2 style="margin:0;font-size:19px;color:var(--sky-deep);"><i class="fas fa-triangle-exclamation" style="margin-right:8px;"></i>Danh sách vi phạm</h2>
+      <button class="btn-fab" onclick="openAdminViolationModal()" title="Thêm vi phạm mới" aria-label="Thêm vi phạm mới"><i class="fas fa-plus"></i></button>
+    </div>
     <div class="card" style="margin-bottom:18px;">
       <div class="row">
         <div><label>Lớp</label><select id="logClass" onchange="loadAdminViolations()">
@@ -866,6 +897,71 @@ async function renderAdminViolationsTab(body){
     </div>
     <div id="logList">${loading()}</div>`;
   loadAdminViolations();
+}
+
+function openAdminViolationModal(){
+  openModal(`
+    <h3 style="margin-top:0;"><i class="fas fa-file-circle-plus" style="color:var(--sky);margin-right:6px;"></i>Lập phiếu vi phạm</h3>
+    <div id="cvMsg"></div>
+    <div class="row">
+      <div class="field">
+        <label>Khối</label>
+        <select id="cvGrade" onchange="updateAdminClassOptions()">
+          <option value="">Chọn khối</option>
+          ${GRADES.map(g=>`<option value="${g}">Khối ${g}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field">
+        <label>Lớp</label>
+        <select id="cvClass"><option value="">Chọn khối trước</option></select>
+      </div>
+    </div>
+    <div class="field"><label>Họ tên học sinh</label><input id="cvStudent" type="text" placeholder="Nguyễn Văn A"></div>
+    <div class="field"><label>Hình thức vi phạm</label><input id="cvType" type="text" placeholder="VD: Đi muộn, Không đồng phục..."></div>
+    <div class="field"><label>Nội dung vi phạm</label><textarea id="cvContent" placeholder="Mô tả chi tiết nội dung vi phạm..."></textarea></div>
+    <div class="field"><label>Bằng chứng</label><textarea id="cvEvidence" placeholder="Mô tả bằng chứng (tạm thời nhập text)..."></textarea></div>
+    <div class="modal-actions" style="justify-content:space-between;">
+      <button class="btn btn-outline" onclick="closeModal()"><i class="fas fa-xmark"></i>Đóng</button>
+      <button class="btn btn-accent" id="cvSubmitBtn" onclick="submitAdminViolation()"><i class="fas fa-check"></i>Tạo phiếu vi phạm</button>
+    </div>`);
+}
+
+function updateAdminClassOptions(){
+  const g = document.getElementById('cvGrade').value;
+  const sel = document.getElementById('cvClass');
+  sel.innerHTML = '<option value="">Chọn lớp</option>';
+  if(!g) return;
+  state.classesCache.filter(c => c.grade === g).forEach(c => {
+    sel.innerHTML += `<option value="${c.id}">${esc(c.name)}</option>`;
+  });
+}
+
+async function submitAdminViolation(){
+  const classId = document.getElementById('cvClass').value;
+  const studentName = document.getElementById('cvStudent').value.trim();
+  const vType = document.getElementById('cvType').value.trim();
+  const content = document.getElementById('cvContent').value.trim();
+  const evidence = document.getElementById('cvEvidence').value.trim();
+  const msg = document.getElementById('cvMsg');
+  msg.innerHTML = '';
+  if(!classId || !studentName || !vType){ msg.innerHTML = `<div class="msg err">Vui lòng chọn lớp, nhập tên học sinh và loại vi phạm.</div>`; return; }
+  
+  const btn = document.getElementById('cvSubmitBtn');
+  btnLoading(btn, 'Đang tạo…');
+  try{
+    await db.collection('violations').add({
+      studentName, classId, className: className(classId),
+      violationType: vType, customType: '',
+      content, evidence,
+      points: 0,
+      statement: '',
+      createdByUid: state.user.uid, createdByName: state.profile.name,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    closeModal();
+    loadAdminViolations(); // Tải lại danh sách vi phạm
+  }catch(e){ msg.innerHTML = `<div class="msg err">Lỗi: ${esc(e.message)}</div>`; }
+  finally{ btnReset(btn); }
 }
 
 async function loadAdminViolations(){
@@ -892,6 +988,8 @@ function violationSlipHtml(v, opts){
       <div class="item"><span class="k">Thời gian</span><span class="v">${fmtDate(v.createdAt)}</span></div>
       <div class="item"><span class="k">Điểm trừ</span><span class="v mono">${v.points||0}</span></div>
     </div>
+    ${v.content ? `<label class="content-label">Nội dung vi phạm</label><div class="slip-content" style="background:var(--crimson-soft);padding:10px 12px;border-radius:8px;">${esc(v.content)}</div>` : ''}
+    ${v.evidence ? `<label class="content-label">Bằng chứng</label><div class="slip-content" style="background:var(--amber-soft);padding:10px 12px;border-radius:8px;">${esc(v.evidence)}</div>` : ''}
     <label class="content-label">Bản tường trình</label>
     <div class="slip-content" style="background:var(--sky-soft);padding:10px 12px;border-radius:8px;">${v.statement ? esc(v.statement) : '(chưa có tường trình)'}</div>
     ${opts.editableStatement ? `
@@ -1043,8 +1141,6 @@ async function renderMyCreatedTab(body){
     ? `<div class="empty">Bạn chưa tạo phiếu vi phạm nào.</div>`
     : renderSimpleViolationList(docs, {showClass:true, editableFor:true});
 }
-
-/* override showViolationDetail call sites already pass editable flag from opts.editableFor via closure in renderSimpleViolationList button */
 
 /* ================================================================
    GVCN APP (chỉ xem)
